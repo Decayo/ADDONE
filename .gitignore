@@ -1,0 +1,13 @@
+# ADDONE derived state.
+# Intent, contracts, rules, decisions, and scopes stay tracked (ADDONE.md section 54).
+.addone/.cache/
+
+# Local-only architecture state, for anyone who opts out of tracked sidecar mode.
+.addone.local/
+
+# Agent scratch
+.scratch/**/tmp/
+
+# OS / editor
+.DS_Store
+*.swp
