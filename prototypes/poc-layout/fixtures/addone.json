@@ -1,0 +1,25 @@
+{ "project": { "name": "ADDONE world map (auto-placed)" },
+  "entities": {
+    "addone":        { "kind": "system",  "parent": null,          "intent": "Architecture as a development interface." },
+    "addone.human":  { "kind": "actor",   "parent": "addone",      "intent": "You, via HUD and chat." },
+    "addone.host":   { "kind": "system",  "parent": "addone",      "intent": "Host surface." },
+    "addone.host.hosts": { "kind": "system", "parent": "addone.host", "intent": "Claude Code, Codex." },
+    "addone.host.skill": { "kind": "surface","parent": "addone.host", "intent": "SKILL.md procedures." },
+    "addone.host.hooks": { "kind": "guard",  "parent": "addone.host", "intent": "claude.json, codex.json." },
+    "addone.core":   { "kind": "system",  "parent": "addone",      "intent": "src/ core." },
+    "addone.core.cli":    { "kind": "surface","parent": "addone.core", "intent": "context, render, check." },
+    "addone.core.render": { "kind": "module", "parent": "addone.core", "intent": "ascii, html, agent." },
+    "addone.core.scope":  { "kind": "guard",  "parent": "addone.core", "intent": "check(path) allow or deny." },
+    "addone.core.watch":  { "kind": "module", "parent": "addone.core", "intent": "fs to render to reload." },
+    "addone.core.state":  { "kind": "store",  "parent": "addone.core", "intent": ".addone/*.json" }
+  },
+  "relations": [
+    { "from": "addone.human", "to": "addone.host.hosts", "kind": "intent" },
+    { "from": "addone.host.hosts", "to": "addone.host.skill", "kind": "reads" },
+    { "from": "addone.host.hosts", "to": "addone.core.cli", "kind": "runs" },
+    { "from": "addone.host.hooks", "to": "addone.core.scope", "kind": "PreToolUse" },
+    { "from": "addone.core.cli", "to": "addone.core.state", "kind": "apply" },
+    { "from": "addone.core.render", "to": "addone.core.state", "kind": "reads" },
+    { "from": "addone.core.scope", "to": "addone.core.state", "kind": "reads" },
+    { "from": "addone.core.watch", "to": "addone.core.render", "kind": "triggers" }
+  ] }

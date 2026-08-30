@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ADDONE · addone",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "last-change",
+        "label": "Last change",
+        "focus": [
+          "cli",
+          "skill",
+          "hooks",
+          "state",
+          "render"
+        ],
+        "note": "Shaping round 3: store became state, context folded into render and cli, cli / skill / hooks added, reconcile became a skill procedure."
+      },
+      {
+        "id": "todo",
+        "label": "Todo",
+        "focus": [
+          "state",
+          "render",
+          "scope",
+          "watch",
+          "cli"
+        ],
+        "note": "Every core module is at phase: architecture. Nothing is skeletoned yet."
+      },
+      {
+        "id": "explore",
+        "label": "Explore",
+        "focus": [
+          "state",
+          "render"
+        ],
+        "note": "Two open decisions: who writes state (apply vs direct edit), and whether home is one page."
+      },
+      {
+        "id": "enforce",
+        "label": "Enforcement path",
+        "focus": [
+          "hooks",
+          "scope",
+          "state"
+        ],
+        "note": "PreToolUse in either host calls scope.check, which reads only scopes."
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      40,
+      90
+    ],
+    "cols": 5,
+    "gapX": 90,
+    "gapY": 80,
+    "cellW": 140,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "human",
+      "type": "external",
+      "label": "You",
+      "sublabel": "HUD · chat",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "hosts",
+      "type": "external",
+      "label": "Agent hosts",
+      "sublabel": "Claude Code · Codex",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "skill",
+      "type": "frontend",
+      "label": "skill",
+      "sublabel": "SKILL.md · procedures",
+      "row": 0,
+      "col": 2,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "hooks",
+      "type": "security",
+      "label": "hooks",
+      "sublabel": "claude.json · codex.json",
+      "row": 0,
+      "col": 4,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "cli",
+      "type": "frontend",
+      "label": "cli",
+      "sublabel": "context · render · check",
+      "row": 1,
+      "col": 1,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "render",
+      "type": "backend",
+      "label": "render",
+      "sublabel": "ascii · html · agent",
+      "row": 1,
+      "col": 2,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "scope",
+      "type": "security",
+      "label": "scope",
+      "sublabel": "check(path) → allow | deny",
+      "row": 1,
+      "col": 4,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "state",
+      "sublabel": ".addone/*.json",
+      "row": 2,
+      "col": 2,
+      "tag": "phase: arch"
+    },
+    {
+      "id": "watch",
+      "type": "backend",
+      "label": "watch",
+      "sublabel": "fs → render → reload",
+      "row": 1,
+      "col": 3,
+      "tag": "phase: arch"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "src/  ADDONE core",
+      "wraps": [
+        "cli",
+        "render",
+        "scope",
+        "state",
+        "watch"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "host surface",
+      "wraps": [
+        "hosts",
+        "skill",
+        "hooks"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "intent",
+      "from": "human",
+      "to": "hosts",
+      "label": "intent",
+      "variant": "emphasis"
+    },
+    {
+      "id": "hosts-skill",
+      "from": "hosts",
+      "to": "skill",
+      "label": "reads",
+      "variant": "dashed"
+    },
+    {
+      "id": "hosts-cli",
+      "from": "hosts",
+      "to": "cli",
+      "label": "runs",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "hooks-scope",
+      "from": "hooks",
+      "to": "scope",
+      "label": "PreToolUse",
+      "variant": "security",
+      "labelDy": 24
+    },
+    {
+      "id": "cli-state",
+      "from": "cli",
+      "to": "state",
+      "label": "apply",
+      "labelDy": 30,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "render-state",
+      "from": "render",
+      "to": "state",
+      "label": "reads",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "scope-state",
+      "from": "scope",
+      "to": "state",
+      "label": "reads scopes",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 30
+    },
+    {
+      "id": "watch-render",
+      "from": "watch",
+      "to": "render",
+      "label": "triggers",
+      "fromSide": "left",
+      "toSide": "right"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "TODO",
+      "items": [
+        "5 core modules at phase: architecture",
+        "0 skeletoned · 0 implemented"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "EXPLORE",
+      "items": [
+        "[H] who writes state: apply vs direct edit",
+        "[I] home: one page or one per address",
+        "in chat: grill addone.state"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "LAST",
+      "items": [
+        "architecture · shaping round 3 · 2026-08-29",
+        "store → state · context folded into render + cli",
+        "added cli, skill, hooks · reconcile became a procedure"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "FORBIDDEN",
+      "items": [
+        "render ↛ hosts: pure, never calls a model",
+        "scope ↛ render: the hook parses JSON and compares paths only"
+      ]
+    }
+  ]
+}

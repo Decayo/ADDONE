@@ -1,0 +1,97 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>prototype · ADDONE home window</title>
+<!--
+  PROTOTYPE. Disposable evidence for one display question:
+  "What does the ADDONE home window show, and how does a human navigate
+   layers, last change, todo, and explore?"
+  Three structurally different variants on this one page, switched by ?variant=A|B|C.
+  out/home.html and out/delta.html are Archify renders of state.head / state.base.
+-->
+<style>
+:root{--bg:#0b0d12;--fg:#d7dbe3;--dim:#7b8494;--line:#232834;--acc:#7aa2f7;--warn:#e0af68}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font:13px/1.5 ui-monospace,Menlo,monospace}
+.top{height:40px;display:flex;align-items:center;gap:22px;padding:0 14px;border-bottom:1px solid var(--line);color:var(--dim);white-space:nowrap;overflow:hidden}
+.top b{color:var(--fg)} .top code{color:var(--acc)}
+.stage{position:absolute;top:40px;bottom:0;left:0;right:0;display:flex}
+iframe{border:0;flex:1;height:100%;background:var(--bg)}
+.pane{width:270px;border-right:1px solid var(--line);padding:12px;overflow:auto}
+.rail{width:250px;border-left:1px solid var(--line);padding:12px;overflow:auto}
+h4{margin:12px 0 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+h4:first-child{margin-top:0}
+.tree div{padding:2px 0;cursor:pointer;white-space:pre}
+.tree div:hover{color:var(--acc)}
+.ph{float:right;font-size:11px;color:var(--warn)}
+.commit{padding:6px 8px;border:1px solid var(--line);border-radius:4px;margin:6px 0;cursor:pointer}
+.commit:hover{border-color:var(--acc)}
+.commit small{color:var(--dim);display:block}
+.stub{color:var(--dim);font-size:11px}
+.sw{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:#f5f7fa;color:#111;padding:6px 12px;border-radius:999px;box-shadow:0 4px 20px rgba(0,0,0,.55);font-weight:600;z-index:9}
+.sw button{border:0;background:transparent;font:inherit;cursor:pointer;padding:0 4px}
+</style>
+<div class="top" id="top"></div>
+<div class="stage" id="stage"></div>
+<div class="sw"><button id="prev">←</button><span id="lbl"></span><button id="next">→</button></div>
+<script>
+const V = {
+  A: { name: 'Map · Archify alone, chapters carry todo / explore / last', build: () => `<iframe src="out/home.html"></iframe>` },
+  B: { name: 'Window · tree + map + change rail', build: () => `
+    <div class="pane">
+      <h4>architecture · depth 1 of 1</h4>
+      <div class="tree">
+        <div data-f="">addone</div>
+        <div data-f="state">├─ state<span class="ph">arch</span></div>
+        <div data-f="render">├─ render<span class="ph">arch</span></div>
+        <div data-f="scope">├─ scope<span class="ph">arch</span></div>
+        <div data-f="watch">├─ watch<span class="ph">arch</span></div>
+        <div data-f="cli">├─ cli<span class="ph">arch</span></div>
+        <div data-f="skill">├─ skill<span class="ph">arch</span></div>
+        <div data-f="hooks">└─ hooks<span class="ph">arch</span></div>
+      </div>
+      <h4>todo</h4>
+      <div>5 modules · phase: architecture<br>0 skeletoned · 0 implemented</div>
+      <h4>explore</h4>
+      <div>[H] who writes state<br>[I] home: one page?<br><span class="stub">in chat: grill addone.state</span></div>
+    </div>
+    <iframe id="map" src="out/home.html"></iframe>
+    <div class="rail">
+      <h4>changes</h4>
+      <div class="commit" data-v="last-change">working tree · shaping r3<small>5 nodes touched · architecture</small></div>
+      <div class="commit" data-v="">9eb7deb · docs(init)<small>7 nodes · bootstrap</small></div>
+      <div class="commit" data-delta="1">open delta ↗<small>before / delta / after</small></div>
+      <h4>diagrams on this node</h4>
+      <div class="stub">none yet · a sequence or lifecycle diagram would list here and open in the map</div>
+    </div>` },
+  C: { name: 'Delta · the last change is the home', build: () => `<iframe src="out/delta.html"></iframe>` },
+};
+const keys = Object.keys(V);
+const q = new URLSearchParams(location.search);
+let cur = keys.includes(q.get('variant')) ? q.get('variant') : 'B';
+
+function render() {
+  document.getElementById('top').innerHTML =
+    `<span><code>addone</code> › depth 1</span>` +
+    `<span>intent → grill → <b>state</b> → skeleton → scope → impl → reconcile</span>` +
+    `<span>last: architecture · shaping r3</span>`;
+  const s = document.getElementById('stage');
+  s.innerHTML = V[cur].build();
+  document.getElementById('lbl').textContent = `${cur} — ${V[cur].name}`;
+  history.replaceState(null, '', `?variant=${cur}`);
+  const map = document.getElementById('map');
+  const go = (file, hash) => { map.src = `out/${file}?t=${Date.now()}${hash}`; };
+  s.querySelectorAll('[data-f]').forEach(el => el.onclick = () => go('home.html', el.dataset.f ? `#focus=${el.dataset.f}` : ''));
+  s.querySelectorAll('[data-v]').forEach(el => el.onclick = () => go('home.html', el.dataset.v ? `#view=${el.dataset.v}` : ''));
+  s.querySelectorAll('[data-delta]').forEach(el => el.onclick = () => go('delta.html', ''));
+}
+function step(d) { cur = keys[(keys.indexOf(cur) + d + keys.length) % keys.length]; render(); }
+document.getElementById('prev').onclick = () => step(-1);
+document.getElementById('next').onclick = () => step(1);
+addEventListener('keydown', e => {
+  const a = document.activeElement;
+  if (['INPUT', 'TEXTAREA'].includes(a.tagName) || a.isContentEditable) return;
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+render();
+</script>

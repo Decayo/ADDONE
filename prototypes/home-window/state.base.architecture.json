@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ADDONE · addone (shaping round 2)",
+    "quality_profile": "showcase"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      40,
+      90
+    ],
+    "cols": 5,
+    "gapX": 90,
+    "gapY": 80,
+    "cellW": 140,
+    "cellH": 64
+  },
+  "components": [
+    {
+      "id": "human",
+      "type": "external",
+      "label": "You",
+      "sublabel": "HUD · chat",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "hosts",
+      "type": "external",
+      "label": "Agent hosts",
+      "sublabel": "Claude Code · Codex",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "reconcile",
+      "type": "external",
+      "label": "reconcile",
+      "sublabel": "document",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "context",
+      "type": "backend",
+      "label": "context",
+      "sublabel": "compile for one address",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "render",
+      "type": "backend",
+      "label": "render",
+      "sublabel": "html · ascii",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "scope",
+      "type": "security",
+      "label": "scope",
+      "sublabel": "session write boundary",
+      "row": 1,
+      "col": 4
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "store",
+      "sublabel": ".addone/ read · write",
+      "row": 2,
+      "col": 2
+    },
+    {
+      "id": "watch",
+      "type": "backend",
+      "label": "watch",
+      "sublabel": "re-render on change",
+      "row": 1,
+      "col": 3
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "addone",
+      "wraps": [
+        "context",
+        "render",
+        "scope",
+        "state",
+        "watch"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "intent",
+      "from": "human",
+      "to": "hosts",
+      "label": "intent",
+      "variant": "emphasis"
+    },
+    {
+      "id": "hosts-context",
+      "from": "hosts",
+      "to": "context",
+      "label": "context",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "context-state",
+      "from": "context",
+      "to": "state",
+      "label": "reads",
+      "labelDy": 30,
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "render-state",
+      "from": "render",
+      "to": "state",
+      "label": "reads",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "scope-state",
+      "from": "scope",
+      "to": "state",
+      "label": "reads",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 30
+    },
+    {
+      "id": "watch-render",
+      "from": "watch",
+      "to": "render",
+      "label": "triggers",
+      "fromSide": "left",
+      "toSide": "right"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Round 2",
+      "items": [
+        "Seven entities named by primitive",
+        "reconcile listed as a document",
+        "context is its own module"
+      ]
+    }
+  ]
+}
