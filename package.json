@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "description": "Architecture as the working interface between a human and coding agents.",
-  "engines": { "node": ">=26" },
-  "scripts": {
-    "addone": "node src/cli.ts"
+  "engines": {
+    "node": ">=26"
   }
 }

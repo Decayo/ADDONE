@@ -241,6 +241,17 @@ the grep, git, AST, and LSP it already has; ADDONE ships the intended half and t
 comparison format. Cost: an agent-run collection varies between runs, which the
 benchmark report has to state.
 
+### The type gate is a pinned devDependency, not a network call
+
+`skill/SKILL.md` requires `tsc --noEmit` before review. Nothing in the repo could run it:
+no `tsconfig.json`, no typescript dependency, no binary on the machine. Node runs
+TypeScript by stripping the types, so every type error went through unseen. The answer is
+a `tsconfig.json` and typescript pinned as a devDependency. This costs the repo its
+zero-dependency working tree, which is the price of the gate existing at all; the
+dependency is dev-only and never reaches an installed ADDONE. `npx` was rejected: a check
+that needs the network is a check that skips itself when the network is down, silently.
+No build step is added. `--noEmit` reads; it does not produce.
+
 ## Rejected alternatives
 
 Each group names the decision it was weighed against.

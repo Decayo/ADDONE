@@ -31,14 +31,12 @@
     "addone.host.skill": {
       "kind": "surface",
       "parent": "addone.host",
-      "intent": "SKILL.md: the procedures an agent runs (init, grill, skeleton, layout, reconcile).",
-      "phase": "skeleton"
+      "intent": "SKILL.md: the procedures an agent runs (init, grill, skeleton, layout, reconcile)."
     },
     "addone.host.hooks": {
       "kind": "guard",
       "parent": "addone.host",
-      "intent": "Per-host PreToolUse config fragments that call scope.",
-      "phase": "skeleton"
+      "intent": "Per-host PreToolUse config fragments that call scope."
     },
     "addone.core": {
       "kind": "system",
@@ -48,39 +46,32 @@
     "addone.core.cli": {
       "kind": "surface",
       "parent": "addone.core",
-      "intent": "Entry points. Dispatch only.",
-      "phase": "skeleton"
+      "intent": "Entry points. Dispatch only."
     },
     "addone.core.render": {
       "kind": "module",
       "parent": "addone.core",
-      "intent": "SubState to projection: ascii, agent, archify IR, hud shell. Pure, zero IO.",
-      "phase": "skeleton"
+      "intent": "SubState to projection: ascii, agent, archify IR, hud shell. Pure, zero IO."
     },
     "addone.core.watch": {
       "kind": "module",
       "parent": "addone.core",
-      "intent": "Change under .addone/ triggers render and a browser reload. Glue, no logic.",
-      "phase": "skeleton"
+      "intent": "Change under .addone/ triggers render and a browser reload. Glue, no logic."
     },
     "addone.core.scope": {
       "kind": "guard",
       "parent": "addone.core",
-      "intent": "Turn a session's scope into allow or deny for one path. The hook entry point.",
-      "phase": "skeleton",
-      "assurance": "critical"
+      "intent": "Turn a session's scope into allow or deny for one path. The hook entry point."
     },
     "addone.core.state": {
       "kind": "store",
       "parent": "addone.core",
-      "intent": "Read, validate, select, and apply. The only module that touches .addone/.",
-      "phase": "skeleton"
+      "intent": "Read, validate, select, and apply. The only module that touches .addone/."
     },
     "addone.core.init": {
       "kind": "module",
       "parent": "addone.core",
-      "intent": "Install ADDONE into a repo: walk the slots, write .addone/, place the skill and hooks.",
-      "phase": "skeleton"
+      "intent": "Install ADDONE into a repo: walk the slots, write .addone/, place the skill and hooks."
     }
   },
   "relations": [
@@ -137,108 +128,6 @@
       "reason": "The hook runs before every write. It parses JSON and compares paths, nothing else."
     }
   ],
-  "anchors": {
-    "addone.core.cli": [
-      {
-        "file": "src/cli.ts"
-      }
-    ],
-    "addone.core.state": [
-      {
-        "file": "src/state/load.ts",
-        "symbol": "load"
-      },
-      {
-        "file": "src/state/validate.ts",
-        "symbol": "validate"
-      },
-      {
-        "file": "src/state/select.ts",
-        "symbol": "select"
-      },
-      {
-        "file": "src/state/apply.ts",
-        "symbol": "apply"
-      }
-    ],
-    "addone.core.render": [
-      {
-        "file": "src/render/ascii.ts",
-        "symbol": "ascii"
-      },
-      {
-        "file": "src/render/agent.ts",
-        "symbol": "agent"
-      },
-      {
-        "file": "src/render/archify.ts",
-        "symbol": "archify"
-      },
-      {
-        "file": "src/render/hud.ts",
-        "symbol": "hud"
-      },
-      {
-        "file": "src/render/archify-append.ts",
-        "symbol": "append"
-      },
-      {
-        "file": "src/render/commands.ts",
-        "symbol": "renderCommand"
-      }
-    ],
-    "addone.core.scope": [
-      {
-        "file": "src/scope/check.ts",
-        "symbol": "check"
-      },
-      {
-        "file": "src/scope/session.ts",
-        "symbol": "session"
-      },
-      {
-        "file": "src/scope/hook.ts",
-        "symbol": "main"
-      },
-      {
-        "file": "src/scope/commands.ts",
-        "symbol": "scopeCommand"
-      }
-    ],
-    "addone.core.watch": [
-      {
-        "file": "src/watch/watch.ts",
-        "symbol": "watch"
-      }
-    ],
-    "addone.host.skill": [
-      {
-        "file": "skill/SKILL.md"
-      }
-    ],
-    "addone.host.hooks": [
-      {
-        "file": "hooks/claude.settings.json"
-      },
-      {
-        "file": "hooks/codex.hooks.json"
-      }
-    ],
-    "addone.core": [
-      {
-        "file": "src/types.ts"
-      },
-      {
-        "file": "src/todo.ts"
-      }
-    ],
-    "addone.core.init": [
-      {
-        "file": "src/init/init.ts",
-        "symbol": "init"
-      }
-    ]
-  },
   "scopes": {
     "addone.core": {
       "write": [
@@ -268,9 +157,9 @@
     ]
   },
   "last": {
-    "at": "2026-08-30T17:01:20.488Z",
-    "type": "implementation",
-    "address": "addone.core.render",
-    "what": "set-anchors addone.core.render (6 files)"
+    "at": "2026-08-31T00:00:00.000Z",
+    "type": "architecture",
+    "address": "addone",
+    "what": "deleted the skeleton: no code, no anchors"
   }
 }
