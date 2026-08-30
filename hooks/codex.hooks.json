@@ -1,0 +1,11 @@
+{
+  "_": "Fragment. `addone init` writes it to .codex/hooks.json (install: project; the project path must be trusted) or merges into ~/.codex/hooks.json (global).",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write|Bash",
+        "hooks": [{ "type": "command", "command": "node src/scope/hook.ts" }]
+      }
+    ]
+  }
+}

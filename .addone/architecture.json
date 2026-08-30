@@ -1,0 +1,278 @@
+{
+  "version": 0,
+  "project": {
+    "name": "ADDONE",
+    "defaults": {
+      "assurance": "standard"
+    },
+    "decisions": "docs/decisions/first-slice.md"
+  },
+  "entities": {
+    "addone": {
+      "kind": "system",
+      "parent": null,
+      "intent": "Architecture as the working interface between a human and coding agents."
+    },
+    "addone.human": {
+      "kind": "actor",
+      "parent": "addone",
+      "intent": "You, through the HUD and the chat.",
+      "layout": {
+        "row": 0,
+        "col": 0
+      }
+    },
+    "addone.host": {
+      "kind": "system",
+      "parent": "addone",
+      "intent": "Everything that lives on the agent host side."
+    },
+    "addone.host.hosts": {
+      "kind": "system",
+      "parent": "addone.host",
+      "intent": "Claude Code and Codex, the two first-class hosts.",
+      "layout": {
+        "row": 0,
+        "col": 1
+      }
+    },
+    "addone.host.skill": {
+      "kind": "surface",
+      "parent": "addone.host",
+      "intent": "SKILL.md: the procedures an agent runs (init, grill, skeleton, layout, reconcile).",
+      "phase": "skeleton",
+      "layout": {
+        "row": 0,
+        "col": 2
+      }
+    },
+    "addone.host.hooks": {
+      "kind": "guard",
+      "parent": "addone.host",
+      "intent": "Per-host PreToolUse config fragments that call scope.",
+      "phase": "skeleton",
+      "layout": {
+        "row": 0,
+        "col": 4
+      }
+    },
+    "addone.core": {
+      "kind": "system",
+      "parent": "addone",
+      "intent": "src/: the TypeScript core, run directly on Node."
+    },
+    "addone.core.cli": {
+      "kind": "surface",
+      "parent": "addone.core",
+      "intent": "Entry points. Dispatch only.",
+      "phase": "skeleton",
+      "layout": {
+        "row": 1,
+        "col": 1
+      }
+    },
+    "addone.core.render": {
+      "kind": "module",
+      "parent": "addone.core",
+      "intent": "SubState to projection: ascii, agent, archify IR, hud shell. Pure, zero IO.",
+      "phase": "skeleton",
+      "layout": {
+        "row": 1,
+        "col": 2
+      }
+    },
+    "addone.core.watch": {
+      "kind": "module",
+      "parent": "addone.core",
+      "intent": "Change under .addone/ triggers render and a browser reload. Glue, no logic.",
+      "phase": "skeleton",
+      "layout": {
+        "row": 1,
+        "col": 3
+      }
+    },
+    "addone.core.scope": {
+      "kind": "guard",
+      "parent": "addone.core",
+      "intent": "Turn a session's scope into allow or deny for one path. The hook entry point.",
+      "phase": "skeleton",
+      "assurance": "critical",
+      "layout": {
+        "row": 1,
+        "col": 4
+      }
+    },
+    "addone.core.state": {
+      "kind": "store",
+      "parent": "addone.core",
+      "intent": "Read, validate, select, and apply. The only module that touches .addone/.",
+      "phase": "skeleton",
+      "layout": {
+        "row": 2,
+        "col": 2
+      }
+    }
+  },
+  "relations": [
+    {
+      "from": "addone.human",
+      "to": "addone.host.hosts",
+      "kind": "intent"
+    },
+    {
+      "from": "addone.host.hosts",
+      "to": "addone.host.skill",
+      "kind": "reads"
+    },
+    {
+      "from": "addone.host.hosts",
+      "to": "addone.core.cli",
+      "kind": "runs"
+    },
+    {
+      "from": "addone.host.hooks",
+      "to": "addone.core.scope",
+      "kind": "PreToolUse"
+    },
+    {
+      "from": "addone.core.cli",
+      "to": "addone.core.state",
+      "kind": "apply"
+    },
+    {
+      "from": "addone.core.render",
+      "to": "addone.core.state",
+      "kind": "reads"
+    },
+    {
+      "from": "addone.core.scope",
+      "to": "addone.core.state",
+      "kind": "reads"
+    },
+    {
+      "from": "addone.core.watch",
+      "to": "addone.core.render",
+      "kind": "triggers"
+    }
+  ],
+  "forbidden": [
+    {
+      "from": "addone.core.render",
+      "to": "addone.host.hosts",
+      "reason": "render(state) → html is a pure function and never calls a model. Invariant 2."
+    },
+    {
+      "from": "addone.core.scope",
+      "to": "addone.core.render",
+      "reason": "The hook runs before every write. It parses JSON and compares paths, nothing else."
+    }
+  ],
+  "anchors": {
+    "addone.core.cli": [
+      {
+        "file": "src/cli.ts"
+      }
+    ],
+    "addone.core.state": [
+      {
+        "file": "src/state/load.ts",
+        "symbol": "load"
+      },
+      {
+        "file": "src/state/validate.ts",
+        "symbol": "validate"
+      },
+      {
+        "file": "src/state/select.ts",
+        "symbol": "select"
+      },
+      {
+        "file": "src/state/apply.ts",
+        "symbol": "apply"
+      }
+    ],
+    "addone.core.render": [
+      {
+        "file": "src/render/ascii.ts",
+        "symbol": "ascii"
+      },
+      {
+        "file": "src/render/agent.ts",
+        "symbol": "agent"
+      },
+      {
+        "file": "src/render/archify.ts",
+        "symbol": "archify"
+      },
+      {
+        "file": "src/render/hud.ts",
+        "symbol": "hud"
+      }
+    ],
+    "addone.core.scope": [
+      {
+        "file": "src/scope/check.ts",
+        "symbol": "check"
+      },
+      {
+        "file": "src/scope/session.ts",
+        "symbol": "session"
+      },
+      {
+        "file": "src/scope/hook.ts",
+        "symbol": "main"
+      }
+    ],
+    "addone.core.watch": [
+      {
+        "file": "src/watch/watch.ts",
+        "symbol": "watch"
+      }
+    ],
+    "addone.host.skill": [
+      {
+        "file": "skill/SKILL.md"
+      }
+    ],
+    "addone.host.hooks": [
+      {
+        "file": "hooks/claude.settings.json"
+      },
+      {
+        "file": "hooks/codex.hooks.json"
+      }
+    ],
+    "addone.core": [
+      {
+        "file": "src/types.ts"
+      },
+      {
+        "file": "src/todo.ts"
+      }
+    ]
+  },
+  "scopes": {
+    "addone.core": {
+      "write": [
+        "src/**",
+        "hooks/**",
+        "skill/**",
+        ".addone/**"
+      ],
+      "read": [
+        "**"
+      ],
+      "requires_approval": [
+        "CONTEXT.md",
+        "AGENTS.md",
+        "docs/decisions/**"
+      ]
+    }
+  },
+  "last": {
+    "at": "2026-08-29",
+    "type": "architecture",
+    "address": "addone.core",
+    "what": "Skeleton materialized from the depth-1 shape: five core modules, skill, hooks. Signatures and TODOs only."
+  }
+}

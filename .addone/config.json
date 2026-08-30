@@ -1,0 +1,15 @@
+{
+  "version": 0,
+  "slots": {
+    "host":      { "choice": "both",           "options": ["claude-code", "codex", "both"],                     "progress": "chosen" },
+    "install":   { "choice": "project",        "options": ["global", "project"],                                "progress": "chosen" },
+    "stateMode": { "choice": "sidecar",        "options": ["sidecar", "inline", "local"],                       "progress": "chosen" },
+    "writePath": { "choice": "cli",            "options": ["cli", "direct"],                                    "progress": "chosen" },
+    "render":    { "choice": "archify+ascii",  "options": ["archify", "default", "mermaid", "ascii"],           "progress": "chosen",
+                   "layout": { "choice": "agent", "options": ["agent", "auto"] } },
+    "watch":     { "choice": "addone",         "options": ["addone", "archify-preview", "none"],                "progress": "chosen" },
+    "enforce":   { "choice": "hook",           "options": ["hook", "advisory", "off"],                          "progress": "verified",
+                   "evidence": "POC-1 2026-08-29: deny observed on Claude Code and Codex" },
+    "evidence":  { "choice": "agent",          "options": ["agent", "gitnexus", "import-linter"],               "progress": "chosen" }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "_": "Fragment. `addone init` merges it into .claude/settings.json (install: project) or ~/.claude/settings.json (global).",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Bash",
+        "hooks": [{ "type": "command", "command": "node src/scope/hook.ts" }]
+      }
+    ]
+  }
+}
