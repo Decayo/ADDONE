@@ -64,6 +64,35 @@ A semantic landmark in or beside source (`@arch.id` inline, or a sidecar anchor)
 agent compiles from a decision. Optional acceleration.
 _Avoid_: annotation, tag
 
+### Views
+
+**View**:
+One diagram as one JSON file under `.addone/views/`: which nodes it shows, where, in what
+colour, with what links. A view never adds topology; the model owns that. Kinds: `map`
+(a node's children) and `attached` (sequence, lifecycle, dataflow); any view may point at
+`related` views.
+_Avoid_: diagram file, chart
+
+**Second layer**:
+What a node reveals when opened: anchors with their sync colour, the doc link, related
+views, commit and PR links. There is no third layer except an extension's modal.
+_Avoid_: details panel, drawer
+
+**Wait list**:
+The open decisions attached to addresses, counted up the tree like unread messages. The
+surface an engineer interacts with most.
+_Avoid_: backlog, inbox, explore
+
+**Open link**:
+A configurable template that turns an anchor into a jump: editor, t3code, GitHub, or
+anything else. State stores the anchor; the template resolves it.
+_Avoid_: deep link, permalink
+
+**Extension**:
+A plugin whose output is its own JSON under `.addone/` and whose detail is a modal, the
+only allowed third layer.
+_Avoid_: plugin, add-on
+
 ### Evidence
 
 **Evidence**:

@@ -15,6 +15,9 @@ import { todo } from '../todo.ts';
  *   - relation or forbidden endpoint missing
  *   - anchors or scopes keyed by a missing address
  *   - exactly one root (parent null)
+ *   - a view naming a node the model lacks: the view is dirty ([O]); a map with no layout for
+ *     one of its nodes; an attached view without a body
+ *   - a doc reference to a missing file
  * Smells (open a GRILL, never fail):
  *   - a parent with more than 12 children   (Archify's map limit; section 49 pressure)
  *   - an entity with a phase but no anchors once phase is past skeleton

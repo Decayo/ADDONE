@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!--
+  POC-3 · shell.html — the embedding side of the answer.
+
+  It iframes the appended Archify artifact with ?embed=1, listens for the three
+  messages runtime/layer.js posts (node-focus, node-open, anchor-open), and
+  drives focus back into the iframe with #focus=<id>. Nothing here needs
+  Archify to change: the only contract is window.postMessage plus the hash
+  deep link Archify already ships (syncFocusFromHash, template.html:8797).
+
+  Open it as a file:// URL. Chrome delivers postMessage across file:// frames
+  with targetOrigin '*'; event.origin arrives as the string "null".
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ADDONE shell · POC-3</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; height: 100vh; display: grid; grid-template-columns: 1fr 20rem;
+    background: #0d1117; color: #c9d1d9;
+    font: 0.8rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  iframe { width: 100%; height: 100%; border: 0; border-right: 1px solid #21262d; }
+  aside { padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+  h1 { font-size: 0.78rem; margin: 0; color: #f0f6fc; letter-spacing: 0.04em; }
+  h2 { font-size: 0.68rem; margin: 0 0 0.3rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.07em; }
+  section { border: 1px solid #21262d; border-radius: 0.4rem; padding: 0.5rem; }
+  #node { font-size: 1rem; font-weight: 700; color: #58a6ff; }
+  .phase { display: inline-block; padding: 0 0.35rem; border-radius: 0.2rem; font-size: 0.62rem; }
+  .phase[data-p="changed"] { background: #12341c; color: #3fb950; }
+  .phase[data-p="todo"]    { background: #3a2d10; color: #d29922; }
+  .phase[data-p="open"]    { background: #21262d; color: #8b949e; }
+  a { color: #58a6ff; display: block; text-decoration: none; padding: 0.1rem 0; word-break: break-all; }
+  a:hover { text-decoration: underline; }
+  .kind { color: #8b949e; }
+  .dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; margin-right: 0.3rem; }
+  .dot[data-s="match"] { background: #3fb950; }
+  .dot[data-s="drift"] { background: #d29922; }
+  .row { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  button {
+    font: inherit; font-size: 0.66rem; background: #161b22; color: #c9d1d9;
+    border: 1px solid #30363d; border-radius: 0.25rem; padding: 0.12rem 0.4rem; cursor: pointer;
+  }
+  button:hover { border-color: #58a6ff; color: #58a6ff; }
+  #log { font-size: 0.62rem; color: #8b949e; white-space: pre-wrap; max-height: 9rem; overflow-y: auto; margin: 0; }
+  .muted { color: #6e7681; }
+</style>
+</head>
+<body>
+<iframe id="map" src="out/appended.html?embed=1" title="ADDONE architecture"></iframe>
+
+<aside>
+  <h1>ADDONE shell</h1>
+
+  <section>
+    <h2>Drive the iframe · #focus=</h2>
+    <div class="row" id="focusButtons"></div>
+  </section>
+
+  <section>
+    <h2>Focused node</h2>
+    <div id="node" class="muted">none</div>
+    <div id="phase"></div>
+  </section>
+
+  <section>
+    <h2>Links</h2>
+    <div id="links" class="muted">none</div>
+  </section>
+
+  <section>
+    <h2>Anchors</h2>
+    <div id="anchors" class="muted">none</div>
+  </section>
+
+  <section>
+    <h2>Message log</h2>
+    <pre id="log">waiting…</pre>
+  </section>
+</aside>
+
+<script>
+(function () {
+  var IDS = ['human', 'hosts', 'skill', 'hooks', 'cli', 'render', 'watch', 'scope', 'state'];
+  var SRC = 'out/appended.html?embed=1';
+  var frame = document.getElementById('map');
+  var $ = function (id) { return document.getElementById(id); };
+
+  // --- drive focus with the hash deep link Archify already understands ---
+  IDS.forEach(function (id) {
+    var b = document.createElement('button');
+    b.textContent = id;
+    b.onclick = function () { frame.src = SRC + '#focus=' + encodeURIComponent(id); };
+    $('focusButtons').appendChild(b);
+  });
+
+  function log(line) {
+    var el = $('log');
+    el.textContent = (new Date().toLocaleTimeString() + '  ' + line + '\n' + el.textContent).slice(0, 1400);
+  }
+
+  function paintLinks(links) {
+    var box = $('links');
+    box.textContent = '';
+    if (!links || !links.length) { box.className = 'muted'; box.textContent = 'none'; return; }
+    box.className = '';
+    links.forEach(function (l) {
+      var a = document.createElement('a');
+      a.href = l.href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.innerHTML = '<span class="kind">' + (l.kind || 'doc') + ' · </span>';
+      a.appendChild(document.createTextNode(l.label));
+      box.appendChild(a);
+    });
+  }
+
+  function paintAnchors(anchors) {
+    var box = $('anchors');
+    box.textContent = '';
+    if (!anchors || !anchors.length) { box.className = 'muted'; box.textContent = 'none'; return; }
+    box.className = '';
+    anchors.forEach(function (a) {
+      var link = document.createElement('a');
+      link.href = a.url;                       // e.g. vscode://file/<abs>:<line>
+      link.title = a.url;
+      link.innerHTML = '<span class="dot" data-s="' + a.state + '"></span>';
+      link.appendChild(document.createTextNode(a.path + ':' + a.line));
+      box.appendChild(link);
+    });
+  }
+
+  window.addEventListener('message', function (ev) {
+    var m = ev.data;
+    if (!m || m.source !== 'addone') return;
+
+    if (m.type === 'node-focus') {
+      $('node').textContent = m.nodeId || 'none';
+      $('node').className = m.nodeId ? '' : 'muted';
+      $('phase').innerHTML = m.nodeId
+        ? '<span class="phase" data-p="' + m.phase + '">' + m.phase + '</span>'
+        : '';
+      paintLinks(m.links);
+      paintAnchors(m.anchors);
+      log('node-focus  ' + (m.nodeId || '(cleared)'));
+    }
+
+    if (m.type === 'node-open') {
+      // Double click. Opening the sub-map tab is the shell's job; the POC only
+      // has to prove the node id crosses the frame boundary.
+      log('node-open   ' + m.nodeId + '  →  would open shell.html?map=' + m.nodeId);
+      window.open('shell.html?map=' + encodeURIComponent(m.nodeId), '_blank');
+    }
+
+    if (m.type === 'anchor-open') {
+      log('anchor-open ' + m.anchor.path + ':' + m.anchor.line + '  →  ' + m.anchor.url);
+      window.open(m.anchor.url, '_blank');
+    }
+  });
+
+  var sub = new URLSearchParams(location.search).get('map');
+  if (sub) {
+    document.querySelector('h1').textContent = 'ADDONE shell · sub-map: ' + sub;
+    frame.src = SRC + '#focus=' + encodeURIComponent(sub);
+  }
+  log('shell ready');
+})();
+</script>
+</body>
+</html>

@@ -12,7 +12,8 @@ const USAGE = `addone <command>
 
   init                      walk the slots top-down, write .addone/config.json      (skill: init)
   context <address> [depth] print the agent CONTEXT block                           (state.select → render.agent)
-  render [ascii|archify|hud] write projections to .addone/.cache/render/            (state.select → render.*; archify HTML via the Archify CLI)
+  render [ascii|archify|hud] write projections to .addone/.cache/render/            (state.select → render.*; archify: deliver, then append)
+  export <view> [json|png|svg] export one view from the canonical artifact          (decision [U]; never the appended page)
   watch                     re-render on change                                     (watch.watch)
   apply <mutation.json>     change state through the only write path               (state.apply → persist)
   scope on <address> | off  start or stop guarding this session                    (scope.session)

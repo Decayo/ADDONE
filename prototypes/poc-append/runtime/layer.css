@@ -1,0 +1,51 @@
+/* ADDONE second layer — appended styles.
+   Every selector is namespaced `addone-`/`data-addone-`. That matters twice:
+   1. it can never collide with an Archify semantic class (.c-* / .t-* / .a-* / .m-*);
+   2. Archify's SVG export copies host CSS only for selectors matching
+      /(^|,)\s*(svg|:root|\[data-theme|\[data-preset|\.c-|\.t-|\.a-|\.m-)/,
+      so none of this leaks into a downloaded SVG. */
+
+/* --- capability 1: status ring. The semantic type rect (.c-frontend etc.)
+       is never touched; we paint our own ring 3px outside it. --- */
+[data-addone-layer="ring"] { fill: none; stroke: none; stroke-width: 1.6; }
+[data-addone-phase="changed"] [data-addone-layer="ring"] { stroke: #3fb950; }
+[data-addone-phase="todo"]    [data-addone-layer="ring"] { stroke: #d29922; }
+[data-addone-phase="open"]    [data-addone-layer="ring"] { stroke: #8b949e; stroke-dasharray: 4 3; }
+
+[data-addone-phase="changed"] { filter: drop-shadow(0 0 3px rgba(63, 185, 80, 0.65)); }
+[data-addone-phase="todo"]    { filter: drop-shadow(0 0 3px rgba(210, 153, 34, 0.55)); }
+[data-addone-phase="open"]    { opacity: 0.45; }
+
+/* --- capability 3: anchor badges --- */
+[data-addone-layer="anchor"] { stroke: rgba(0, 0, 0, 0.55); stroke-width: 0.6; cursor: pointer; }
+[data-addone-anchor-state="match"] { fill: #3fb950; }
+[data-addone-anchor-state="drift"] { fill: #d29922; }
+[data-addone-layer="anchor"]:hover,
+[data-addone-layer="anchor"]:focus-visible { stroke: #f0f6fc; stroke-width: 1.2; outline: none; }
+
+/* --- capability 4: extra links, both inside Archify's passport and in our
+       own overlay. Same markup, two hosts. --- */
+.addone-links { display: grid; gap: 0.2rem; margin-top: 0.4rem; }
+.addone-links[hidden] { display: none; }
+.addone-link {
+  font: 500 0.66rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #58a6ff; text-decoration: none;
+  border: 1px solid rgba(88, 166, 255, 0.35); border-radius: 0.3rem;
+  padding: 0.12rem 0.36rem;
+}
+.addone-link:hover { border-color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
+.addone-link::before { content: attr(data-addone-kind) " · "; opacity: 0.65; }
+
+/* Our own panel. Used in embed mode, where Archify's own CSS rule
+   `html[data-embed="true"] .focus-chip { display: none !important }`
+   hides the Semantic Passport outright. */
+.addone-panel {
+  position: fixed; z-index: 40; min-width: 12rem; max-width: 17rem;
+  background: rgba(13, 17, 23, 0.96); border: 1px solid rgba(88, 166, 255, 0.4);
+  border-radius: 0.5rem; padding: 0.5rem 0.6rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  font: 0.66rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: #c9d1d9;
+}
+.addone-panel[hidden] { display: none; }
+.addone-panel-title { display: block; font-weight: 700; color: #f0f6fc; }
+.addone-panel-phase { display: inline-block; margin-top: 0.15rem; opacity: 0.8; }

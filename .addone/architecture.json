@@ -16,11 +16,7 @@
     "addone.human": {
       "kind": "actor",
       "parent": "addone",
-      "intent": "You, through the HUD and the chat.",
-      "layout": {
-        "row": 0,
-        "col": 0
-      }
+      "intent": "You, through the HUD and the chat."
     },
     "addone.host": {
       "kind": "system",
@@ -30,31 +26,19 @@
     "addone.host.hosts": {
       "kind": "system",
       "parent": "addone.host",
-      "intent": "Claude Code and Codex, the two first-class hosts.",
-      "layout": {
-        "row": 0,
-        "col": 1
-      }
+      "intent": "Claude Code and Codex, the two first-class hosts."
     },
     "addone.host.skill": {
       "kind": "surface",
       "parent": "addone.host",
       "intent": "SKILL.md: the procedures an agent runs (init, grill, skeleton, layout, reconcile).",
-      "phase": "skeleton",
-      "layout": {
-        "row": 0,
-        "col": 2
-      }
+      "phase": "skeleton"
     },
     "addone.host.hooks": {
       "kind": "guard",
       "parent": "addone.host",
       "intent": "Per-host PreToolUse config fragments that call scope.",
-      "phase": "skeleton",
-      "layout": {
-        "row": 0,
-        "col": 4
-      }
+      "phase": "skeleton"
     },
     "addone.core": {
       "kind": "system",
@@ -65,52 +49,32 @@
       "kind": "surface",
       "parent": "addone.core",
       "intent": "Entry points. Dispatch only.",
-      "phase": "skeleton",
-      "layout": {
-        "row": 1,
-        "col": 1
-      }
+      "phase": "skeleton"
     },
     "addone.core.render": {
       "kind": "module",
       "parent": "addone.core",
       "intent": "SubState to projection: ascii, agent, archify IR, hud shell. Pure, zero IO.",
-      "phase": "skeleton",
-      "layout": {
-        "row": 1,
-        "col": 2
-      }
+      "phase": "skeleton"
     },
     "addone.core.watch": {
       "kind": "module",
       "parent": "addone.core",
       "intent": "Change under .addone/ triggers render and a browser reload. Glue, no logic.",
-      "phase": "skeleton",
-      "layout": {
-        "row": 1,
-        "col": 3
-      }
+      "phase": "skeleton"
     },
     "addone.core.scope": {
       "kind": "guard",
       "parent": "addone.core",
       "intent": "Turn a session's scope into allow or deny for one path. The hook entry point.",
       "phase": "skeleton",
-      "assurance": "critical",
-      "layout": {
-        "row": 1,
-        "col": 4
-      }
+      "assurance": "critical"
     },
     "addone.core.state": {
       "kind": "store",
       "parent": "addone.core",
       "intent": "Read, validate, select, and apply. The only module that touches .addone/.",
-      "phase": "skeleton",
-      "layout": {
-        "row": 2,
-        "col": 2
-      }
+      "phase": "skeleton"
     }
   },
   "relations": [
@@ -207,6 +171,10 @@
       {
         "file": "src/render/hud.ts",
         "symbol": "hud"
+      },
+      {
+        "file": "src/render/archify-append.ts",
+        "symbol": "append"
       }
     ],
     "addone.core.scope": [
@@ -269,10 +237,20 @@
       ]
     }
   },
+  "docs": {
+    "addone": [
+      {
+        "file": "docs/archive/ADDONE.md"
+      },
+      {
+        "file": "docs/archive/INTERFACE.md"
+      }
+    ]
+  },
   "last": {
     "at": "2026-08-29",
     "type": "architecture",
-    "address": "addone.core",
-    "what": "Skeleton materialized from the depth-1 shape: five core modules, skill, hooks. Signatures and TODOs only."
+    "address": "addone.core.render",
+    "what": "Second layer settled ([O] [P] [Q] [R] [S] [T] [U]): layout moved to views/addone.map.json, docs added, archify-append added to render."
   }
 }

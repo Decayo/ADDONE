@@ -1,0 +1,96 @@
+{
+  "_comment": "ADDONE second layer for the home map. Node ids match out/base.html. Phase precedence when a node is in several sets: open > changed > todo.",
+
+  "openTemplate": "vscode://file/{abs}:{line}",
+  "openTemplateAlternatives": [
+    "https://host/open?p={path}&l={line}",
+    "https://github.com/Decayo/ADDONE/blob/main/{path}#L{line}"
+  ],
+  "repoRoot": "/mnt/shares/arch-linux/workspace/ADDONE",
+
+  "nodes": {
+    "human": { "phase": "none" },
+
+    "hosts": { "phase": "none" },
+
+    "skill": {
+      "phase": "changed",
+      "anchors": [
+        { "path": "skill/SKILL.md", "line": 1, "state": "match" },
+        { "path": "skill/procedures/reconcile.md", "line": 12, "state": "drift" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "agents/issue-tracker.md", "href": "../../docs/agents/issue-tracker.md" },
+        { "kind": "commit", "label": "9eb7deb bootstrap", "href": "https://github.com/Decayo/ADDONE/commit/9eb7deb" }
+      ]
+    },
+
+    "hooks": {
+      "phase": "changed",
+      "anchors": [
+        { "path": "hooks/claude.json", "line": 3, "state": "match" },
+        { "path": "hooks/codex.json", "line": 3, "state": "match" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "decisions/first-slice.md", "href": "../../docs/decisions/first-slice.md" },
+        { "kind": "pr", "label": "PR #12 enforcement path", "href": "https://github.com/Decayo/ADDONE/pull/12" }
+      ]
+    },
+
+    "cli": {
+      "phase": "changed",
+      "anchors": [
+        { "path": "src/cli.ts", "line": 24, "state": "match" },
+        { "path": "src/commands/context.ts", "line": 8, "state": "drift" },
+        { "path": "src/commands/check.ts", "line": 5, "state": "match" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "CONTEXT.md", "href": "../../CONTEXT.md" },
+        { "kind": "commit", "label": "9eb7deb bootstrap", "href": "https://github.com/Decayo/ADDONE/commit/9eb7deb" }
+      ]
+    },
+
+    "render": {
+      "phase": "open",
+      "anchors": [
+        { "path": "src/render/home.ts", "line": 17, "state": "drift" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "decisions/first-slice.md#home", "href": "../../docs/decisions/first-slice.md" },
+        { "kind": "issue", "label": "#7 is home one page?", "href": "https://github.com/Decayo/ADDONE/issues/7" }
+      ]
+    },
+
+    "state": {
+      "phase": "open",
+      "anchors": [
+        { "path": ".addone/state.json", "line": 1, "state": "match" },
+        { "path": "src/state/apply.ts", "line": 31, "state": "drift" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "CONTEXT.md#state", "href": "../../CONTEXT.md" },
+        { "kind": "issue", "label": "#6 who writes state?", "href": "https://github.com/Decayo/ADDONE/issues/6" }
+      ]
+    },
+
+    "scope": {
+      "phase": "todo",
+      "anchors": [
+        { "path": "src/scope/check.ts", "line": 11, "state": "match" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "agents/domain.md", "href": "../../docs/agents/domain.md" }
+      ]
+    },
+
+    "watch": {
+      "phase": "todo",
+      "anchors": [
+        { "path": "src/watch/index.ts", "line": 9, "state": "match" }
+      ],
+      "links": [
+        { "kind": "doc", "label": "decisions/first-slice.md", "href": "../../docs/decisions/first-slice.md" }
+      ]
+    }
+  }
+}

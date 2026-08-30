@@ -10,6 +10,8 @@
     "watch":     { "choice": "addone",         "options": ["addone", "archify-preview", "none"],                "progress": "chosen" },
     "enforce":   { "choice": "hook",           "options": ["hook", "advisory", "off"],                          "progress": "verified",
                    "evidence": "POC-1 2026-08-29: deny observed on Claude Code and Codex" },
-    "evidence":  { "choice": "agent",          "options": ["agent", "gitnexus", "import-linter"],               "progress": "chosen" }
+    "evidence":  { "choice": "agent",          "options": ["agent", "gitnexus", "import-linter"],               "progress": "chosen" },
+    "open":      { "choice": "vscode",         "options": ["vscode", "t3code", "github", "custom"],             "progress": "chosen",
+                   "template": "vscode://file{abs}:{line}" }
   }
 }

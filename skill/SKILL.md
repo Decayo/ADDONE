@@ -64,6 +64,30 @@ A skeleton file contains, in this order, and nothing else:
 Done when: every file imports under `node` without flags, every seam throws `TODO`, every
 anchor in state names an existing file whose `@arch.id` matches.
 
+### Views
+
+- The model (`architecture.json`) owns topology. A view (`.addone/views/<id>.json`) owns
+  one diagram: which nodes, where, what colour, what links. A view never adds a node or
+  edge the model lacks.
+- Every node with children has a `map` view. Attached views (sequence, lifecycle,
+  dataflow, workflow) hang on a node; `related` points at views that are not children.
+- The tree lists views, never leaf boxes. A leaf lives inside its parent's map.
+- Layout is written into the view by the layout procedure, never onto an entity.
+
+### Docs and links
+
+- Markdown is auxiliary: explanation and history, never structure. Attach it to a node
+  through `docs`, at a heading or a line. Write it as a second pass, asking what an
+  engineer needs when they dive in, not what the diagram already says.
+- A link to code, a doc, a commit, or a PR is formatted through the `open` slot's
+  template. State stores the anchor; nothing stores a resolved link.
+
+### Exports
+
+- `addone export <view> json|png|svg` reads the canonical artifact that `deliver` wrote.
+  The appended page is a build product opened only inside the shell; it is never a source
+  and never an export input.
+
 ### State
 
 Validation rules live with the code that runs them: `src/state/validate.ts`. The mutation

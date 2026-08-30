@@ -67,16 +67,60 @@ Inherited as settled: the invariants in `CONTEXT.md`.
   parents exist, single-valued fields), and the LAST record is written in the same step.
   Direct JSON edits stay possible for repair but are not the documented path. How much
   of this the skill must say is decided when SKILL.md is written.
-- **[N] Layout is state. Default author: the agent. Auto-layout: a deferred option.**
-  Each node's `row` and `col` live in `.addone/`. By default the agent places nodes when
-  topology changes, following Archify's mode rules (one left-to-right spine, short
-  branches, 6 to 12 nodes), repairs from the validator's `supportedFixes`, and writes the
-  positions back; the human adjusts in chat. Render is a pure read of stored positions.
-  Automatic layout (dagre / elk, as Mermaid and React Flow use) is a solved problem and
+- **[N] Layout belongs to the view, and the agent authors it. Auto-layout: a deferred
+  option.** Positions live in the diagram's own JSON under `.addone/views/`, never on the
+  entity: one node can sit in a parent map and in a related diagram at different places.
+  The agent places nodes when topology changes, following Archify's mode rules (one
+  left-to-right spine, short branches, 6 to 12 nodes), repairs from the validator's
+  `supportedFixes`, and writes the positions into the view; the human adjusts in chat.
+  Render is a pure read. Automatic layout (dagre / elk, as Mermaid and React Flow use)
   stays on the render slot as `layout: auto`, deferred, not rejected. POC-2's failure was
-  the implementation, a naive placer without dummy vertices or crossing minimisation, not
-  the approach. Archify itself rejects auto-layout for its own aesthetic; that is
-  Archify's call for Archify, not a constraint on ADDONE.
+  the implementation, not the approach. Amended in round 6: layout moved from entity to
+  view.
+- **[O] Two SSOT layers, both JSON, never overlapping.** `architecture.json` is the model:
+  what exists, who connects to whom, what is forbidden. A view file under `.addone/views/`
+  is the diagram: which nodes it shows, where, in what colour, with what links. A view
+  cannot add a node or edge the model lacks; validate rejects it. A view whose node left
+  the model is dirty, like a stale anchor. Later SSOTs (decisions, extensions) follow the
+  same rule: JSON, one owner each.
+- **[R] A diagram is an independent JSON file with a renderer-neutral shape.** It can be
+  referenced, pasted, exported (raw JSON, PNG, SVG) and rendered by any adapter:
+  Archify plus our layer, Mermaid, others. `render/archify.ts` therefore consumes the view
+  JSON, not SubState. Views are `map` (a node's children, generated from the model then
+  persisted with layout) or `attached` (authored: sequence, lifecycle, dataflow), and any
+  view may declare `related` links to views that are not its children.
+- **[P] Two layers of information, no third.** Layer one is the diagram. Layer two opens
+  on a node: every anchor with its sync colour (green: recorded line still matches;
+  yellow: the file changed since the last sync), the markdown doc link, related views,
+  and, for a finished node, its commit and PR links. Markdown is the auxiliary form: it
+  holds explanation and history, never structure, and the agent writes it as a second
+  pass on how to present with the least load. An engineer dives only when interested or
+  when something is wrong. A third layer exists only as an extension's modal (error
+  style, complexity, smell scores), and an extension's output is its own JSON under
+  `.addone/`.
+- **[Q] Opening a link is a configurable template.** The `open` slot holds one template
+  such as `vscode://file{abs}:{line}` (`{abs}` starts with a slash) or `https://host/open?p={path}&l={line}`; the shell,
+  the ascii renderer, and the skill all format links through it. State stores only the
+  anchor, never the resolved link.
+- **[S] The wait list is state and cascades.** An open decision is a JSON record under
+  `.addone/decisions/` with a `status` and an `address`; every tree row shows the count of
+  open decisions in its subtree, like unread counts. This is the surface an engineer
+  interacts with most, so it moves out of the map into the changes column, with a modal
+  for the detail; the answer still happens in chat ([K]).
+- **[T] Every UI operation has a cli equivalent, and the cli must deliver the diagram.**
+  Open, focus, export, compare are commands; the agent pastes ascii in chat and PNG, SVG,
+  or a link in a PR. If the human never opens the web UI, the cli still puts the diagram
+  in front of them. The shell keeps no state of its own; tabs and navigation history live
+  in the browser, undo of state is git ([C]).
+- **[U] Exports come from the canonical artifact only.** `addone export <view> json|png|svg`
+  reads the HTML that `deliver` wrote. The appended page is a build product opened only
+  inside the shell, where `?embed=1` hides Archify's Export menu; it is never an export
+  input. Raised by POC-3: Archify's export sanitiser is a fixed denylist of its own
+  attributes, so a third-party layer would ride into PNG and SVG unnoticed. In parallel,
+  ask upstream for a generic strip hook. An HTML overlay outside the SVG is the fallback if
+  the appended page ever needs to stand alone.
+- **[E] amended.** `docs` joins the model's keys. Views and decisions are separate files
+  under `.addone/views/` and `.addone/decisions/` by [O]; they are not model keys.
 - **[L] The architecture map comes first; other diagram types are renderer capabilities.**
   At every depth the main diagram is the map: a node's direct children and the relations
   between them, at most 12. `workflow`, `sequence`, `dataflow`, and `lifecycle` attach to a
@@ -123,7 +167,7 @@ Archify; both are adapters. `PLAN.md`, `SPEC.md`, `HUD.md`, `CLI.md`, `RENDERER.
 
 ## Open decisions
 
-None. Depth 0 is closed.
+None. Depth 0 is closed; the second layer is settled.
 
 ## Domain references
 
@@ -136,6 +180,8 @@ None. Depth 0 is closed.
 - Skeleton: `.addone/architecture.json` is the state; `src/`, `skill/`, `hooks/` are its
   materialization. Signatures, types, and `todo()` bodies only. `src/types.ts` is the
   type form of `CONTEXT.md`; the `Mutation` union there is the whole write vocabulary.
+  Round 6 added `View`, `Decision`, `DocRef`, `Layer`, `Workspace`, the `open` slot, and
+  `render/archify-append.ts`; `.addone/views/addone.map.json` holds the world map's layout.
 - Work tickets: None.
 - Review: None.
 - Delivery: None.
@@ -155,3 +201,11 @@ None. Depth 0 is closed.
   `cli`), endpoint sides are wrong, labels overlap. Passing needs reserved lanes for
   multi-row edges (Sugiyama dummy vertices), which is the start of the layout engine
   INTERFACE.md section 7 rules out. Decision [N] below.
+- POC-3: `prototypes/poc-append/` — logic question "can the second layer be added onto
+  Archify's generated HTML without a fork?" Answer: **yes, all four capabilities**, by an
+  append step plus the shell; `archify check` stays 9/9. Facts that bind the design: node
+  groups are `g[data-node-id]`; focus lands on `[data-focus-selected]` from every path;
+  Archify has no `postMessage`, the bridge is ours; `?embed=1` hides the passport, so under
+  embed our own overlay panel hosts the links; the append must re-run after every `deliver`.
+  One open risk: Archify's canonical export (PNG, SVG) silently carries our layer, its
+  sanitiser is a fixed denylist. Decision [U] below.
