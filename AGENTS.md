@@ -6,7 +6,8 @@ from that state instead of rediscovering the repo by grep each session.
 
 Where we are: depth 0 and depth 1 shaped (23 decisions), skeleton materialized under
 `src/`, `skill/`, `hooks/`, second layer in `src/types.ts` and `.addone/views/`. Every body
-is a `todo()`. No ticket, no logic. `.addone/` is live: read it before the source.
+is a `todo()`. Spec approved as issue #1; no ticket yet, no logic. `.addone/` is live: read it
+before the source.
 
 ## Read first
 

@@ -9,6 +9,8 @@ CONTEXT, SCOPE, RECONCILE, and WATCH exist, with ADDONE itself as the architectu
 describe, and with a SCOPE hook that blocks an out-of-bounds write on both Claude Code and
 Codex. Success is measured on the same task with the same model and budget: fewer grep and
 read calls, fewer scope violations, fewer human reconstructions of what the agent did.
+The slice ships as a minimal installable tool: `addone init` in a fresh repo, then the
+loop runs there ([V]).
 
 Inherited as settled: the invariants in `CONTEXT.md`.
 
@@ -121,6 +123,15 @@ Inherited as settled: the invariants in `CONTEXT.md`.
   the appended page ever needs to stand alone.
 - **[E] amended.** `docs` joins the model's keys. Views and decisions are separate files
   under `.addone/views/` and `.addone/decisions/` by [O]; they are not model keys.
+- **[V] The first slice is a minimal, installable ADDONE that can dogfood a new repo.**
+  Success is `addone init` in a fresh repo leaving it ready for the loop in one command,
+  then the loop running there: context, apply, render, watch, scope, reconcile. Polish is
+  out; the author's next repos are waiting on this. Install shape: the cli on PATH by a
+  symlink to `src/cli.ts`; skill and hook fragments written into the target repo by `init`
+  (`.claude/settings.json`, `.codex/hooks.json`, `.claude/skills/addone`,
+  `.agents/skills/addone`); fleet-managed global files are never touched. The second
+  dogfood subject is the author's next new repo, before Pipecat ([A] amended: two
+  greenfield subjects before the reconstruction subject).
 - **[L] The architecture map comes first; other diagram types are renderer capabilities.**
   At every depth the main diagram is the map: a node's direct children and the relations
   between them, at most 12. `workflow`, `sequence`, `dataflow`, and `lifecycle` attach to a
@@ -175,8 +186,9 @@ None. Depth 0 is closed; the second layer is settled.
 
 ## Artifacts
 
-- Spec: None. `docs/archive/INTERFACE.md` sections 4, 5, and 8 hold the HUD contents, the
-  live-reload minimum, and the deferred list a spec will draw from.
+- Spec: https://github.com/Decayo/ADDONE/issues/1 (approved 2026-08-29). `docs/archive/INTERFACE.md`
+  sections 4, 5, and 8 remain the source for HUD contents, the live-reload minimum, and
+  the deferred list.
 - Skeleton: `.addone/architecture.json` is the state; `src/`, `skill/`, `hooks/` are its
   materialization. Signatures, types, and `todo()` bodies only. `src/types.ts` is the
   type form of `CONTEXT.md`; the `Mutation` union there is the whole write vocabulary.
