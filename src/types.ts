@@ -165,7 +165,8 @@ export type Mutation =
   | { op: 'move-entity'; id: Address; parent: Address }
   | { op: 'remove-entity'; id: Address }
   | { op: 'add-relation'; relation: Relation }
-  | { op: 'remove-relation'; relation: Pick<Relation, 'from' | 'to'> }
+  /** `kind` is optional: leave it out only when the pair carries exactly one relation. */
+  | { op: 'remove-relation'; relation: Pick<Relation, 'from' | 'to'> & { kind?: string } }
   | { op: 'add-forbidden'; forbidden: Forbidden }
   | { op: 'set-phase'; id: Address; phase: Phase }
   | { op: 'set-scope'; id: Address; scope: Scope }

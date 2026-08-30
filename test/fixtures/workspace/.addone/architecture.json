@@ -1,0 +1,90 @@
+{
+  "version": 0,
+  "project": {
+    "name": "Fixture",
+    "defaults": {
+      "assurance": "standard"
+    }
+  },
+  "entities": {
+    "app": {
+      "kind": "system",
+      "parent": null,
+      "intent": "The fixture root."
+    },
+    "app.api": {
+      "kind": "surface",
+      "parent": "app",
+      "intent": "HTTP surface.",
+      "phase": "skeleton"
+    },
+    "app.api.routes": {
+      "kind": "module",
+      "parent": "app.api",
+      "intent": "One file per route.",
+      "phase": "architecture"
+    },
+    "app.db": {
+      "kind": "store",
+      "parent": "app",
+      "intent": "Where rows live.",
+      "phase": "implementing",
+      "assurance": "critical"
+    }
+  },
+  "relations": [
+    {
+      "from": "app.api",
+      "to": "app.db",
+      "kind": "reads"
+    }
+  ],
+  "forbidden": [
+    {
+      "from": "app.db",
+      "to": "app.api",
+      "reason": "A store never calls its surface."
+    }
+  ],
+  "anchors": {
+    "app.api": [
+      {
+        "file": "src/api.ts",
+        "symbol": "api"
+      }
+    ],
+    "app.db": [
+      {
+        "file": "src/db.ts",
+        "symbol": "db"
+      }
+    ]
+  },
+  "scopes": {
+    "app": {
+      "write": [
+        "src/**"
+      ],
+      "read": [
+        "**"
+      ],
+      "requires_approval": [
+        "docs/**"
+      ]
+    }
+  },
+  "docs": {
+    "app": [
+      {
+        "file": "docs/app.md",
+        "section": "Overview"
+      }
+    ]
+  },
+  "last": {
+    "at": "2026-08-30T00:00:00.000Z",
+    "type": "architecture",
+    "address": "app",
+    "what": "Fixture seeded."
+  }
+}

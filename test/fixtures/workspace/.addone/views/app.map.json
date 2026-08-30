@@ -1,0 +1,20 @@
+{
+  "id": "app.map",
+  "kind": "map",
+  "address": "app",
+  "type": "architecture",
+  "title": "App map",
+  "nodes": {
+    "app.api": {
+      "row": 0,
+      "col": 0
+    },
+    "app.db": {
+      "row": 0,
+      "col": 1
+    }
+  },
+  "related": [
+    "app.api.flow"
+  ]
+}

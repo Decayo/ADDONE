@@ -1,0 +1,15 @@
+{
+  "version": 0,
+  "slots": {
+    "host":      { "choice": "both",    "options": ["claude-code", "codex", "both"], "progress": "chosen" },
+    "install":   { "choice": "project", "options": ["global", "project"],            "progress": "chosen" },
+    "stateMode": { "choice": "sidecar", "options": ["sidecar", "inline", "local"],   "progress": "chosen" },
+    "writePath": { "choice": "cli",     "options": ["cli", "direct"],                "progress": "chosen" },
+    "render":    { "choice": "ascii",   "options": ["archify", "ascii"],             "progress": "chosen" },
+    "watch":     { "choice": "none",    "options": ["addone", "none"],               "progress": "unchosen" },
+    "enforce":   { "choice": "hook",    "options": ["hook", "advisory", "off"],      "progress": "chosen" },
+    "evidence":  { "choice": "agent",   "options": ["agent"],                        "progress": "chosen" },
+    "open":      { "choice": "vscode",  "options": ["vscode", "github"],             "progress": "chosen",
+                   "template": "vscode://file{abs}:{line}" }
+  }
+}

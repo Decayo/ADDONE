@@ -5,7 +5,15 @@
  * @arch.role   surface
  */
 // Entry points. Dispatch only.
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import type { Mutation, Diagnostic } from './types.ts';
 import { todo } from './todo.ts';
+import { loadWorkspace, PATHS } from './state/load.ts';
+import { validate } from './state/validate.ts';
+import { select } from './state/select.ts';
+import { apply, persist } from './state/apply.ts';
+import { agent } from './render/agent.ts';
 
 // Run directly: `node src/cli.ts <command>`. No build step (decision [D]).
 const USAGE = `addone <command>
@@ -20,13 +28,106 @@ const USAGE = `addone <command>
   check <path>              what the hook would say right now                       (scope.check)
 `;
 
+/**
+ * The repo the command works on: `ADDONE_ROOT` when it is set, else the nearest directory
+ * at or above the cwd that holds a `.addone/`. A tool run from a subdirectory still finds
+ * the state, and a test can point one run at a throwaway copy.
+ */
+function findRoot(start: string = process.cwd()): string {
+  const forced = process.env.ADDONE_ROOT;
+  if (forced) return resolve(forced);
+  let at = resolve(start);
+  for (;;) {
+    if (existsSync(join(at, PATHS.architecture))) return at;
+    const up = dirname(at);
+    if (up === at) throw new Error(`no ${PATHS.architecture} here or above ${start}`);
+    at = up;
+  }
+}
+
+function report(diagnostics: Diagnostic[]): void {
+  for (const d of diagnostics) {
+    process.stderr.write(`${d.severity}: ${d.code} on ${d.subject}: ${d.message}\n`);
+  }
+}
+
+/** `context <address> [depth]`: the block an agent reads instead of grepping the repo. */
+function context(args: string[]): number {
+  const [address, rawDepth] = args;
+  if (!address) {
+    process.stderr.write('addone context <address> [depth]\n');
+    return 1;
+  }
+  const depth = rawDepth === undefined ? 1 : Number(rawDepth);
+  if (!Number.isInteger(depth) || depth < 0) {
+    process.stderr.write(`depth must be a whole number, got ${rawDepth}\n`);
+    return 1;
+  }
+  const root = findRoot();
+  const workspace = loadWorkspace(root);
+  // A read never fails on a dirty model, but it says so on stderr and leaves stdout clean.
+  report(validate(workspace, root).filter((d) => d.severity === 'error'));
+  process.stdout.write(agent(select(workspace, address, depth)));
+  return 0;
+}
+
+/** `apply <mutation.json>`: the only write path ([H]). Validates, then persists, or refuses. */
+function applyMutation(args: string[]): number {
+  const [file] = args;
+  if (!file) {
+    process.stderr.write('addone apply <mutation.json>\n');
+    return 1;
+  }
+  const mutation = JSON.parse(readFileSync(resolve(file), 'utf8')) as Mutation;
+  const root = findRoot();
+  // root reaches validate, so the rules that ask the filesystem also guard the write path.
+  const applied = apply(loadWorkspace(root), mutation, undefined, root);
+
+  if (applied.diagnostics.some((d) => d.severity === 'error')) {
+    report(applied.diagnostics);
+    process.stderr.write('refused: nothing was written\n');
+    return 1;
+  }
+  persist(root, applied);
+  report(applied.diagnostics);
+  process.stdout.write(`${applied.workspace.state.last?.what}\n`);
+  return 0;
+}
+
+/**
+ * Every wired command, one entry each. A ticket that adds a command adds one line here and
+ * leaves `main` alone.
+ */
+const COMMANDS: Record<string, (args: string[]) => number> = {
+  context,
+  apply: applyMutation,
+};
+
+/** Named in USAGE, skeleton only. Each one becomes a COMMANDS entry in its own ticket. */
+const PLANNED = ['init', 'render', 'export', 'watch', 'scope', 'check'];
+
 export function main(argv: string[]): number {
-  const [command] = argv;
+  const [command, ...args] = argv;
   if (!command || command === '--help' || command === '-h') {
     process.stdout.write(USAGE);
     return 0;
   }
-  return todo(`dispatch ${command}`);
+  // hasOwn, so `constructor` and `toString` are unknown words, not something to call.
+  if (Object.hasOwn(COMMANDS, command)) {
+    try {
+      return COMMANDS[command](args);
+    } catch (error) {
+      process.stderr.write(`addone: ${(error as Error).message}\n`);
+      return 1;
+    }
+  }
+  if (PLANNED.includes(command)) return todo(`dispatch ${command}`);
+  process.stderr.write(`addone: no command ${command}\n${USAGE}`);
+  return 1;
 }
 
-process.exitCode = main(process.argv.slice(2));
+// Only when this file is what node was asked to run. Importing it (a test, a future
+// embedding) defines main and does nothing else.
+if (import.meta.main) {
+  process.exitCode = main(process.argv.slice(2));
+}

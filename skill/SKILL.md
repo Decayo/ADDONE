@@ -88,6 +88,20 @@ anchor in state names an existing file whose `@arch.id` matches.
   The appended page is a build product opened only inside the shell; it is never a source
   and never an export input.
 
+### Code shape
+
+Maintainability decides between two working options. The shapes that follow from that:
+
+- A discriminated union (`Mutation`, a command name, a diagram type) is handled by a table
+  keyed by its tag, one small function per case, shared preconditions as helpers. Adding a
+  case is adding one entry. A `switch` that grows past a screen is the wrong shape.
+- A fixed-order output (the agent block, the ascii block) is one declarative table of
+  fields in the documented order; the function that prints it walks the table. The order
+  lives in one place and the golden test protects it.
+- A function fits on one screen. Past that, the concern it mixes is the seam to cut.
+- Types are documentation until `tsc --noEmit` says otherwise: run it before review. It
+  is a check, not a dependency; nothing in `package.json` changes.
+
 ### State
 
 Validation rules live with the code that runs them: `src/state/validate.ts`. The mutation

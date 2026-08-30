@@ -5,8 +5,9 @@ Architecture intent lives as tracked JSON under `.addone/`; an agent compiles it
 from that state instead of rediscovering the repo by grep each session.
 
 Where we are: depth 0 and depth 1 shaped (24 decisions), skeleton materialized under
-`src/`, `skill/`, `hooks/`, second layer in `src/types.ts` and `.addone/views/`. Every body
-is a `todo()`. Spec is issue #1; eight work tickets #2 to #9, frontier #2. No logic yet. `.addone/` is live: read it
+`src/`, `skill/`, `hooks/`, second layer in `src/types.ts` and `.addone/views/`. Spec is issue #1;
+eight work tickets #2 to #9. #2 delivered: `context` and `apply` work, 74 tests. Frontier #3 #4
+#5 #6. Everything else is still a `todo()`. `.addone/` is live: read it
 before the source.
 
 ## Read first

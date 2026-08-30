@@ -1,0 +1,11 @@
+{
+  "id": "app.api.flow",
+  "kind": "attached",
+  "address": "app.api",
+  "type": "sequence",
+  "title": "Request flow",
+  "body": {
+    "format": "mermaid",
+    "source": "sequenceDiagram\n  api->>db: read\n"
+  }
+}
