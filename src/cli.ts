@@ -8,12 +8,15 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import type { Mutation, Diagnostic } from './types.ts';
-import { todo } from './todo.ts';
 import { loadWorkspace, PATHS } from './state/load.ts';
 import { validate } from './state/validate.ts';
 import { select } from './state/select.ts';
 import { apply, persist } from './state/apply.ts';
 import { agent } from './render/agent.ts';
+import { init } from './init/init.ts';
+import { scopeCommand, checkCommand } from './scope/commands.ts';
+import { renderCommand, exportCommand } from './render/commands.ts';
+import { watch } from './watch/watch.ts';
 
 // Run directly: `node src/cli.ts <command>`. No build step (decision [D]).
 const USAGE = `addone <command>
@@ -98,13 +101,20 @@ function applyMutation(args: string[]): number {
  * Every wired command, one entry each. A ticket that adds a command adds one line here and
  * leaves `main` alone.
  */
+/** One entry per command. A ticket implements the function it points at; this table is final. */
 const COMMANDS: Record<string, (args: string[]) => number> = {
   context,
   apply: applyMutation,
+  init: (args) => init(args, process.cwd()),
+  render: (args) => renderCommand(args, findRoot()),
+  export: (args) => exportCommand(args, findRoot()),
+  watch: () => {
+    watch(findRoot());
+    return 0;
+  },
+  scope: (args) => scopeCommand(args, findRoot()),
+  check: (args) => checkCommand(args, findRoot()),
 };
-
-/** Named in USAGE, skeleton only. Each one becomes a COMMANDS entry in its own ticket. */
-const PLANNED = ['init', 'render', 'export', 'watch', 'scope', 'check'];
 
 export function main(argv: string[]): number {
   const [command, ...args] = argv;
@@ -121,7 +131,6 @@ export function main(argv: string[]): number {
       return 1;
     }
   }
-  if (PLANNED.includes(command)) return todo(`dispatch ${command}`);
   process.stderr.write(`addone: no command ${command}\n${USAGE}`);
   return 1;
 }

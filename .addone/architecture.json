@@ -75,6 +75,12 @@
       "parent": "addone.core",
       "intent": "Read, validate, select, and apply. The only module that touches .addone/.",
       "phase": "skeleton"
+    },
+    "addone.core.init": {
+      "kind": "module",
+      "parent": "addone.core",
+      "intent": "Install ADDONE into a repo: walk the slots, write .addone/, place the skill and hooks.",
+      "phase": "skeleton"
     }
   },
   "relations": [
@@ -175,6 +181,10 @@
       {
         "file": "src/render/archify-append.ts",
         "symbol": "append"
+      },
+      {
+        "file": "src/render/commands.ts",
+        "symbol": "renderCommand"
       }
     ],
     "addone.core.scope": [
@@ -189,6 +199,10 @@
       {
         "file": "src/scope/hook.ts",
         "symbol": "main"
+      },
+      {
+        "file": "src/scope/commands.ts",
+        "symbol": "scopeCommand"
       }
     ],
     "addone.core.watch": [
@@ -216,6 +230,12 @@
       },
       {
         "file": "src/todo.ts"
+      }
+    ],
+    "addone.core.init": [
+      {
+        "file": "src/init/init.ts",
+        "symbol": "init"
       }
     ]
   },
@@ -248,9 +268,9 @@
     ]
   },
   "last": {
-    "at": "2026-08-29",
-    "type": "architecture",
+    "at": "2026-08-30T17:01:20.488Z",
+    "type": "implementation",
     "address": "addone.core.render",
-    "what": "Second layer settled ([O] [P] [Q] [R] [S] [T] [U]): layout moved to views/addone.map.json, docs added, archify-append added to render."
+    "what": "set-anchors addone.core.render (6 files)"
   }
 }

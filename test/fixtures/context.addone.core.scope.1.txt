@@ -9,6 +9,7 @@ Anchors:
   src/scope/check.ts · check
   src/scope/session.ts · session
   src/scope/hook.ts · main
+  src/scope/commands.ts · scopeCommand
 Docs: none
 Views: none
 Open: none
@@ -17,4 +18,4 @@ Scope:
   read: **
   approval: CONTEXT.md, AGENTS.md, docs/decisions/**
 Status: skeleton, assurance critical
-Last: 2026-08-29 · architecture on addone.core.render — Second layer settled ([O] [P] [Q] [R] [S] [T] [U]): layout moved to views/addone.map.json, docs added, archify-append added to render.
+Last: 2026-08-30T17:01:20.488Z · implementation on addone.core.render — set-anchors addone.core.render (6 files)

@@ -123,7 +123,7 @@ test('no command prints the usage, and an unwired one still says TODO', () => {
 
   const later = run('watch');
   assert.notEqual(later.status, 0);
-  assert.match(later.stderr, /TODO: dispatch watch/);
+  assert.match(later.stderr, /^addone: TODO: /m, 'the table points at a stub that still says TODO');
 });
 
 test('importing the cli runs nothing: main is guarded by the entry point', () => {
@@ -164,7 +164,8 @@ test('dispatch is a table: wired, planned, and unknown each have one answer', ()
   for (const planned of ['init', 'render', 'export', 'watch', 'scope', 'check']) {
     const out = run(planned);
     assert.notEqual(out.status, 0, planned);
-    assert.match(out.stderr, new RegExp(`TODO: dispatch ${planned}`), planned);
+    assert.match(out.stderr, /^addone: TODO: /m, `${planned} points at a module stub`);
+    assert.equal(out.stdout, '', `${planned} keeps stdout clean`);
   }
 
   for (const member of ['constructor', 'toString', 'hasOwnProperty']) {
