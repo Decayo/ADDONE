@@ -243,7 +243,7 @@ benchmark report has to state.
 
 ### The type gate is a pinned devDependency, not a network call
 
-`skill/SKILL.md` requires `tsc --noEmit` before review. Nothing in the repo could run it:
+The deleted skill required `tsc --noEmit` before review. Nothing in the repo could run it:
 no `tsconfig.json`, no typescript dependency, no binary on the machine. Node runs
 TypeScript by stripping the types, so every type error went through unseen. The answer is
 a `tsconfig.json` and typescript pinned as a devDependency. This costs the repo its
@@ -310,23 +310,16 @@ None. Depth 0 is closed; the second layer is settled.
 
 ## Artifacts
 
-- Spec: https://github.com/Decayo/ADDONE/issues/1 (approved 2026-08-29). `docs/archive/INTERFACE.md`
-  sections 4, 5, and 8 remain the source for HUD contents, the live-reload minimum, and
-  the deferred list.
-- Skeleton: `.addone/architecture.json` is the state; `src/`, `skill/`, `hooks/` are its
-  materialization. Signatures, types, and `todo()` bodies only. `src/types.ts` is the
-  type form of `CONTEXT.md`; the `Mutation` union there is the whole write vocabulary.
-  Round 6 added `View`, `Decision`, `DocRef`, `Layer`, `Workspace`, the `open` slot, and
-  `render/archify-append.ts`; `.addone/views/addone.map.json` holds the world map's layout.
-- Work tickets (GitHub, native `blocked_by` edges set 2026-08-29; #2 delivered, frontier now #3 #4 #5 #6):
-  - #2 read and write the model through the cli (context, apply) — https://github.com/Decayo/ADDONE/issues/2 — **delivered 2026-08-31**, evidence on the issue
-  - #3 addone init installs into a fresh repo — blocked by #2 — https://github.com/Decayo/ADDONE/issues/3
-  - #4 scope guard blocks an out-of-scope write on both hosts — blocked by #2 — https://github.com/Decayo/ADDONE/issues/4
-  - #5 world map rendered through Archify with the second layer and the shell — blocked by #2 — https://github.com/Decayo/ADDONE/issues/5
-  - #6 ascii projection after every apply — blocked by #2 — https://github.com/Decayo/ADDONE/issues/6
-  - #7 watch re-renders and reloads on change — blocked by #5 — https://github.com/Decayo/ADDONE/issues/7
-  - #8 reconcile runs on ADDONE itself — blocked by #2, #6 — https://github.com/Decayo/ADDONE/issues/8
-  - #9 second view through the layout procedure — blocked by #5 — https://github.com/Decayo/ADDONE/issues/9
+- Spec: deleted with the tickets on 2026-08-31. `docs/archive/INTERFACE.md` sections 4,
+  5, and 8 remain the source for HUD contents, the live-reload minimum, and the deferred
+  list.
+- Skeleton: deleted on 2026-08-31, commit `89bcec8`. `src/`, `test/`, `hooks/` and
+  `skill/SKILL.md` are gone, and so are every anchor, phase, and assurance field in
+  `.addone/architecture.json`. The documents around the skeleton named things that were
+  never built, so nothing written against them could be trusted. What remains in
+  `.addone/architecture.json` is intent only: entities, relations, forbidden edges,
+  scopes, docs.
+- Work tickets: all nine GitHub issues deleted on 2026-08-31. Nothing is in flight.
 - Review: None.
 - Delivery: None.
 - Prototype: `prototypes/home-window/` — display question "What does the ADDONE home

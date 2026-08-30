@@ -4,11 +4,12 @@ ADDONE makes architecture the working interface between a human and coding agent
 Architecture intent lives as tracked JSON under `.addone/`; an agent compiles its context
 from that state instead of rediscovering the repo by grep each session.
 
-Where we are: depth 0 and depth 1 shaped (24 decisions), skeleton materialized under
-`src/`, `skill/`, `hooks/`, second layer in `src/types.ts` and `.addone/views/`. Spec is issue #1;
-eight work tickets #2 to #9. #2 delivered: `context` and `apply` work, 74 tests. Frontier #3 #4
-#5 #6. Everything else is still a `todo()`. `.addone/` is live: read it
-before the source.
+Where we are: depth 0 and depth 1 shaped, 29 decisions in `docs/decisions/first-slice.md`.
+The skeleton, the tests, the host hooks, the skill, and every ticket were deleted on
+2026-08-31 (commit `89bcec8`), because the documents that described them named commands,
+fields, and rules that were never built. `.addone/` now holds intent only: entities,
+relations, forbidden edges, scopes, docs, and one map view. There is no code, no anchor,
+and no open ticket. Read `.addone/` before anything else.
 
 ## Read first
 

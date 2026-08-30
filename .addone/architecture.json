@@ -31,12 +31,12 @@
     "addone.host.skill": {
       "kind": "surface",
       "parent": "addone.host",
-      "intent": "SKILL.md: the procedures an agent runs (init, grill, skeleton, layout, reconcile)."
+      "intent": "The procedures an agent runs: init, grill, skeleton, layout, reconcile. Not written."
     },
     "addone.host.hooks": {
       "kind": "guard",
       "parent": "addone.host",
-      "intent": "Per-host PreToolUse config fragments that call scope."
+      "intent": "Per-host PreToolUse config fragments that call scope. Not written."
     },
     "addone.core": {
       "kind": "system",
