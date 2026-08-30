@@ -5,9 +5,9 @@
 # Local-only architecture state, for anyone who opts out of tracked sidecar mode.
 .addone.local/
 
-# Agent scratch
-.scratch/**/tmp/
-
 # OS / editor
 .DS_Store
 *.swp
+
+# Prototype render output
+prototypes/**/out/

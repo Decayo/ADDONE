@@ -22,6 +22,15 @@ Inherited as settled: the invariants in `CONTEXT.md`.
   Verified on Codex 0.149.1: PreToolUse fires for `apply_patch`, `Edit`, `Write`, and
   denies by exit code 2 or `permissionDecision: "deny"`, the same wire shape as Claude
   Code, so one hook script serves both. MCP has no pre-write interception point.
+  **Executed, not just read: POC-1 on 2026-08-29.** One 25-line script, project-scoped
+  hook config on each host (`.claude/settings.json`, `.codex/hooks.json`), headless run
+  on each: `allowed/ok.txt` written, `forbidden/no.txt` blocked, both hosts reported the
+  deny reason back to the model. Two adapter differences to carry into scope's design:
+  Claude Code passes `tool_input.file_path`; Codex passes the whole patch in
+  `tool_input.command`, so paths come from `*** Add File:` / `*** Update File:` lines.
+  Codex project hooks need trust (a trusted project path, or
+  `--dangerously-bypass-hook-trust`). Headless Codex must call the real binary; the
+  `codex-multi-auth` wrapper hung for five minutes with a manual login in progress.
 - **[C] `.addone/` is tracked; only `.cache/` is ignored.** Untracked state forfeits shared
   state, CI enforcement, PR architecture diff, and persistent decisions, which are the
   thesis. Cost: schema churn shows in git log until the shape settles.
@@ -43,6 +52,44 @@ Inherited as settled: the invariants in `CONTEXT.md`.
   machine-readable dependency rule, so no automated grading in this slice; the user knows
   the codebase, so a fabricated reconstruction is visible without one.
 - **[F2] The private work repo waits** until the loop has run on ADDONE and Pipecat.
+- **[J] The depth-0 happy path is ten steps.** intent → GRILL one question at a time →
+  apply to state → render (HUD, ascii delta in chat, agent context) → human says yes →
+  SKELETON, phase becomes skeleton → SCOPE on, hook active → implement inside scope, every
+  write checked, phase becomes implementing → evidence → RECONCILE, human decides:
+  reconciled, or back to GRILL, or back to implement. Two non-happy branches: a scope
+  violation raises an expansion request; a reconcile mismatch returns to step 2 or 8.
+  Phase is a lifecycle: architecture → skeleton → implementing → reconciled. Todo derives
+  from it and is never stored separately.
+- **[K] The human answers in chat. The HUD is read-only for the first slice.** Agent-first;
+  HUD interaction is a later stage, verified only after the other stages work.
+  Confirms INTERFACE.md section 8 ordering.
+- **[H] State is written through `cli apply`.** Validation at write time (ids unique,
+  parents exist, single-valued fields), and the LAST record is written in the same step.
+  Direct JSON edits stay possible for repair but are not the documented path. How much
+  of this the skill must say is decided when SKILL.md is written.
+- **[N] Layout is state. Default author: the agent. Auto-layout: a deferred option.**
+  Each node's `row` and `col` live in `.addone/`. By default the agent places nodes when
+  topology changes, following Archify's mode rules (one left-to-right spine, short
+  branches, 6 to 12 nodes), repairs from the validator's `supportedFixes`, and writes the
+  positions back; the human adjusts in chat. Render is a pure read of stored positions.
+  Automatic layout (dagre / elk, as Mermaid and React Flow use) is a solved problem and
+  stays on the render slot as `layout: auto`, deferred, not rejected. POC-2's failure was
+  the implementation, a naive placer without dummy vertices or crossing minimisation, not
+  the approach. Archify itself rejects auto-layout for its own aesthetic; that is
+  Archify's call for Archify, not a constraint on ADDONE.
+- **[L] The architecture map comes first; other diagram types are renderer capabilities.**
+  At every depth the main diagram is the map: a node's direct children and the relations
+  between them, at most 12. `workflow`, `sequence`, `dataflow`, and `lifecycle` attach to a
+  node when the chosen renderer supports them. Multi-layer navigation comes after the map
+  works.
+- **[M] Every stage of the loop is a slot.** Core defines the interface; adapters fill it;
+  `addone init` walks the slots top-down and records each choice in `.addone/config.json`;
+  each slot carries its own progress (unchosen, chosen, installed, verified) and the HUD
+  shows it. Slots, with the agent's proposed defaults: host (both), install (project),
+  state mode (sidecar), write path (see [H]), render (archify + ascii), watch (addone
+  watch), enforce (hook), evidence (agent procedure). A default can change per slot
+  without reopening [M].
+
 - **[G] No evidence provider is built.** RECONCILE is a skill procedure the agent runs with
   the grep, git, AST, and LSP it already has; ADDONE ships the intended half and the
   comparison format. Cost: an agent-run collection varies between runs, which the
@@ -76,7 +123,7 @@ Archify; both are adapters. `PLAN.md`, `SPEC.md`, `HUD.md`, `CLI.md`, `RENDERER.
 
 ## Open decisions
 
-None.
+None. Depth 0 is closed.
 
 ## Domain references
 
@@ -86,6 +133,25 @@ None.
 
 - Spec: None. `docs/archive/INTERFACE.md` sections 4, 5, and 8 hold the HUD contents, the
   live-reload minimum, and the deferred list a spec will draw from.
+- Skeleton: `.addone/architecture.json` is the state; `src/`, `skill/`, `hooks/` are its
+  materialization. Signatures, types, and `todo()` bodies only. `src/types.ts` is the
+  type form of `CONTEXT.md`; the `Mutation` union there is the whole write vocabulary.
 - Work tickets: None.
 - Review: None.
 - Delivery: None.
+- Prototype: `prototypes/home-window/` — display question "What does the ADDONE home
+  window show, and how does a human navigate layers, last change, todo, and explore?"
+  Three variants (A map-only, B tree + map + change rail, C delta-first), rendered through
+  Archify from `state.base` (round 2) and `state.head` (round 3). Verdict so far: B is
+  closest but not yet right. Settled from it: last change is green, todo is yellow,
+  explore is grey and semi-transparent by default; the home map is the depth-0 world map.
+  Still open: the exact window shape.
+- POC-1: `prototypes/poc-hook/deny.mjs` — logic question "does a PreToolUse hook block a
+  write on both hosts?" Answer: yes on both. Details under [B].
+- POC-2: `prototypes/poc-layout/place.mjs` — logic question "can render derive Archify
+  row/col from state without a layout engine?" Answer: **not with a naive placer.**
+  Longest-path rows plus barycenter columns fail Archify `standard` on both a 9-node and a
+  12-node graph: edges run through unrelated nodes (`render → state` straight through
+  `cli`), endpoint sides are wrong, labels overlap. Passing needs reserved lanes for
+  multi-row edges (Sugiyama dummy vertices), which is the start of the layout engine
+  INTERFACE.md section 7 rules out. Decision [N] below.

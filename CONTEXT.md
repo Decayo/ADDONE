@@ -84,6 +84,19 @@ self-heals and never touches intent.
 The cost an agent pays rediscovering a repo each session by listing, grepping, and reading.
 CONTEXT exists to remove it.
 
+### Loop
+
+**Phase**:
+Where one entity is in the loop: `architecture`, `skeleton`, `implementing`, `reconciled`.
+Todo is derived from it and never stored. An entity without a phase is not ours to build.
+_Avoid_: status, progress
+
+**Slot**:
+One stage of the loop with a core-defined interface and swappable adapters: host,
+install, state mode, write path, render, watch, enforce, evidence. `init` walks them in
+that order and records each choice and its progress.
+_Avoid_: plugin, provider, backend
+
 ### Rules and change
 
 **Change type**:
