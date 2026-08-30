@@ -8,7 +8,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { State, Config, Workspace, View, Decision, SlotName, Slot } from '../types.ts';
 
-/** Repo-relative locations. Decision [E]: one architecture file; [M]: config beside it. */
+/** Repo-relative locations. One architecture file, and the slot config beside it. */
 export const PATHS = {
   architecture: '.addone/architecture.json',
   config: '.addone/config.json',
@@ -150,7 +150,7 @@ export function carrySources(from: Workspace, to: Workspace): void {
 }
 
 /**
- * The whole workspace: the model plus the SSOTs that own themselves ([O]).
+ * The whole workspace: the model plus the SSOTs that own themselves, views and decisions.
  * A view keyed by its own `id`; decisions in file order. Missing `views/` or
  * `decisions/` means the project has none yet, not that the workspace is broken.
  */

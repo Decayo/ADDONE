@@ -8,7 +8,7 @@ metadata:
 # ADDONE
 
 Read `CONTEXT.md` for the vocabulary. State under `.addone/` is the only source of truth
-(invariant 1). Every write to it goes through `addone apply` (decision [H]).
+(invariant 1). Every write to it goes through `addone apply`.
 
 The rules below are the protocol. Procedures follow them; a procedure never invents a
 convention the rules do not state.

@@ -9,7 +9,7 @@ import { todo } from '../todo.ts';
 /**
  * `addone scope on <address>` starts guarding this session with the scope that applies to
  * `address` (the nearest ancestor with one); `addone scope off` stops. Session file under
- * .addone/.cache/ ([J] step 7, invariant 5). Returns the exit code.
+ * .addone/.cache/ (invariant 5). Returns the exit code.
  * TODO: ticket #4.
  */
 export function scopeCommand(args: string[], root: string): number {

@@ -66,7 +66,7 @@ function childLines(sub: SubState, parent: Address, depth: number): string[] {
  *
  * Three rows are not in the list above. `Read by` splits the inbound half out of `Reads`,
  * so an edge that points at the focus can never read as one the focus owns. `Docs`, `Views`
- * and `Open` are the second layer ([P]) and the wait list ([S]): facts select already
+ * and `Open` are the second layer and the wait list: facts select already
  * computed, and an agent that cannot see an open decision would act against a question the
  * human has not answered yet. The ten named fields keep their names and their order.
  */

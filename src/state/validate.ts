@@ -65,7 +65,7 @@ export function entityProblems(entity: Entity): string[] {
   return said.filter((s): s is string => s !== null);
 }
 
-/** A relation is one object with both ends and a named kind ([O], invariant 6). */
+/** A relation is one object with both ends and a named kind. Invariant 6. */
 export function relationProblems(relation: Relation): string[] {
   const said: string[] = [];
   if (!isText(relation?.from)) said.push('from must be an address');
@@ -74,7 +74,7 @@ export function relationProblems(relation: Relation): string[] {
   return said;
 }
 
-/** A view names its kind, its diagram type, the node it hangs on, and a title ([R]). */
+/** A view names its kind, its diagram type, the node it hangs on, and a title. */
 export function viewProblems(view: View): string[] {
   const said = [oneOf(view?.kind, VIEW_KINDS, 'kind'), oneOf(view?.type, DIAGRAM_TYPES, 'type')];
   if (!isText(view?.address)) said.push('address must be the node the view hangs on');
@@ -82,7 +82,7 @@ export function viewProblems(view: View): string[] {
   return said.filter((s): s is string => s !== null);
 }
 
-/** An open decision is a question with an id, a feature, and a status ([S]). */
+/** An open decision is a question with an id, a feature, and a status. */
 export function decisionProblems(decision: Decision): string[] {
   const said = [oneOf(decision?.status, DECISION_STATUS, 'status')];
   if (!isText(decision?.id)) said.push('id must name the decision');
@@ -172,7 +172,7 @@ export function keyedByKnownAddress({ state }: Workspace): Diagnostic[] {
   ];
 }
 
-/** Decision [P]: markdown is auxiliary, but a link that points at nothing is still an error. */
+/** Markdown is auxiliary, but a link that points at nothing is still an error. */
 export function docFilesExist({ state }: Workspace, root?: string): Diagnostic[] {
   if (root === undefined) return [];
   return Object.keys(state.docs)
@@ -195,7 +195,7 @@ export function viewShapes({ views }: Workspace): Diagnostic[] {
     });
 }
 
-/** A view never adds topology ([O]). One that names a node the model lost is dirty. */
+/** A view never adds topology. One that names a node the model lost is dirty. */
 export function viewsClean({ state, views }: Workspace): Diagnostic[] {
   const has = (id: Address): boolean => Object.hasOwn(state.entities, id);
   return soundViews(views).flatMap((id) => {
@@ -304,7 +304,7 @@ export const RULES: Rule[] = [
 /**
  * Run every rule and return the diagnostics. An empty list means the state is sound.
  *
- * Takes the whole workspace because views and decisions are their own SSOTs ([O]) and
+ * Takes the whole workspace because views and decisions are their own SSOTs, and
  * several rules cross the line between them and the model. `root` is the repo root: give
  * it and the rules that ask the filesystem run, leave it out and validate stays pure.
  *

@@ -50,7 +50,7 @@ function breadcrumbOf(state: State, focus: Address): Address[] {
 
 /**
  * The views that hang on a shown node, in id order, then the ones they point at through
- * `related` ([R]). A related view is worth a jump even though it is not a child.
+ * `related`. A related view is worth a jump even though it is not a child.
  */
 function viewsOn(all: Record<ViewId, View>, shown: Set<Address>): View[] {
   const views: View[] = [];
@@ -88,7 +88,7 @@ function nearestScope(state: State, breadcrumb: Address[]): Scope | undefined {
  *
  * Two spans, on purpose. `depth` bounds what is shown: entities, edges, anchors, docs and
  * views. The open-decision count is the whole subtree whatever the depth, because the wait
- * list cascades ([S]) and a count that shrank with depth would hide an open question.
+ * list cascades, and a count that shrank with depth would hide an open question.
  * `entities` also carries the breadcrumb ancestors, so the block can name a parent without
  * a second read.
  */

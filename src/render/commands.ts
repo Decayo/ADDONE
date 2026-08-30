@@ -38,7 +38,7 @@ export function renderCommand(args: string[], root: string): number {
 }
 
 /**
- * `addone export <view> [json|png|svg]`: from the canonical artifact only ([U]), never the
+ * `addone export <view> [json|png|svg]`: from the canonical artifact only, never the
  * appended page. json is the view file itself; png and svg come from the Archify CLI.
  * TODO: ticket #5.
  */
@@ -47,7 +47,7 @@ export function exportCommand(args: string[], root: string): number {
 }
 
 /**
- * What `addone apply` prints after a successful persist ([T]): the ascii block of the node
+ * What `addone apply` prints after a successful persist: the ascii block of the node
  * the mutation touched, so the agent can paste it in chat. Pure: string in, string out.
  */
 export function afterApply(workspace: Workspace, address: Address | undefined): string {

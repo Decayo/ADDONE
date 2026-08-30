@@ -19,7 +19,7 @@ export interface Write {
 /**
  * What one mutation produced. It carries the whole workspace, not just the model, because
  * four ops (`set-view`, `remove-view`, `open-decision`, `settle-decision`) change an SSOT
- * that lives beside `architecture.json` ([O]). `writes` holds the exact bytes, so the pure
+ * that lives beside `architecture.json`, its own SSOT. `writes` holds the exact bytes, so the pure
  * half decides what a file should say and `persist` only does the IO.
  */
 export type Applied = { workspace: Workspace; diagnostics: Diagnostic[]; writes: Write[] };
@@ -252,7 +252,7 @@ const HANDLERS: { [K in Mutation['op']]: Handler<K> } = {
     return { workspace: ws, note: { address: id, what: `add-doc ${id} → ${doc.file}` } };
   },
 
-  // Views: the diagram SSOT, never the model ([O])
+  // Views: the diagram SSOT, never the model
   'set-view': (ws, { view }) => {
     const bad = requireViewId(view.id);
     if (bad) return bad;
@@ -264,7 +264,7 @@ const HANDLERS: { [K in Mutation['op']]: Handler<K> } = {
   },
 
   // A view whose id on disk breaks ID_SHAPE cannot be removed through apply: delete the
-  // file by hand, which [H] allows as a repair edit.
+  // file by hand, which the cli-only write path allows as a repair edit.
   'remove-view': (ws, { id }) => {
     const bad = requireViewId(id);
     if (bad) return bad;
@@ -274,7 +274,7 @@ const HANDLERS: { [K in Mutation['op']]: Handler<K> } = {
     return { workspace: ws, note: { address: view.address, what: `remove-view ${id}` } };
   },
 
-  // Decisions: the wait list ([S])
+  // Decisions: the wait list
   'open-decision': (ws, { decision }) => {
     const bad = requireDecisionId(decision.id);
     if (bad) return bad;

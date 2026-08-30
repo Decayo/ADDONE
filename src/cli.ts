@@ -18,13 +18,13 @@ import { scopeCommand, checkCommand } from './scope/commands.ts';
 import { renderCommand, exportCommand } from './render/commands.ts';
 import { watch } from './watch/watch.ts';
 
-// Run directly: `node src/cli.ts <command>`. No build step (decision [D]).
+// Run directly: `node src/cli.ts <command>`. No build step.
 const USAGE = `addone <command>
 
   init                      walk the slots top-down, write .addone/config.json      (skill: init)
   context <address> [depth] print the agent CONTEXT block                           (state.select → render.agent)
   render [ascii|archify|hud] write projections to .addone/.cache/render/            (state.select → render.*; archify: deliver, then append)
-  export <view> [json|png|svg] export one view from the canonical artifact          (decision [U]; never the appended page)
+  export <view> [json|png|svg] export one view from the canonical artifact          (never the appended page)
   watch                     re-render on change                                     (watch.watch)
   apply <mutation.json>     change state through the only write path               (state.apply → persist)
   scope on <address> | off  start or stop guarding this session                    (scope.session)
@@ -74,7 +74,7 @@ function context(args: string[]): number {
   return 0;
 }
 
-/** `apply <mutation.json>`: the only write path ([H]). Validates, then persists, or refuses. */
+/** `apply <mutation.json>`: the only write path. Validates, then persists, or refuses. */
 function applyMutation(args: string[]): number {
   const [file] = args;
   if (!file) {

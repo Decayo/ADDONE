@@ -11,3 +11,6 @@
 
 # Prototype render output
 prototypes/**/out/
+
+# Claude Code scratch (agent worktrees)
+.claude/

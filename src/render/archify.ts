@@ -16,7 +16,7 @@ const TYPE: Record<Kind, string> = {
 /**
  * Emits Archify IR (schema_version 1) for one `map` view. JSON only: the HTML comes from
  * the Archify CLI (`deliver`), called by cli.ts, then `archify-append.ts` paints the second
- * layer. That keeps this module pure (invariant 2). Archify is an adapter ([R]).
+ * layer. That keeps this module pure (invariant 2). Archify is an adapter behind a JSON IR.
  * Mapping, all one-to-one:
  *   view.nodes          → components  (label, sublabel = intent, tag = phase, row/col from the view)
  *   their parents       → boundaries  (kind region, wraps the nodes that share a parent)
