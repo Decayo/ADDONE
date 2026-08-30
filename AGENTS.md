@@ -4,9 +4,9 @@ ADDONE makes architecture the working interface between a human and coding agent
 Architecture intent lives as tracked JSON under `.addone/`; an agent compiles its context
 from that state instead of rediscovering the repo by grep each session.
 
-Where we are: depth 0 and depth 1 shaped (23 decisions), skeleton materialized under
+Where we are: depth 0 and depth 1 shaped (24 decisions), skeleton materialized under
 `src/`, `skill/`, `hooks/`, second layer in `src/types.ts` and `.addone/views/`. Every body
-is a `todo()`. Spec approved as issue #1; no ticket yet, no logic. `.addone/` is live: read it
+is a `todo()`. Spec is issue #1; eight work tickets #2 to #9, frontier #2. No logic yet. `.addone/` is live: read it
 before the source.
 
 ## Read first

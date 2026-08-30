@@ -1,6 +1,6 @@
 # Change: First slice
 
-**Status:** settled
+**Status:** planned
 **Route:** large
 
 ## Outcome
@@ -194,7 +194,15 @@ None. Depth 0 is closed; the second layer is settled.
   type form of `CONTEXT.md`; the `Mutation` union there is the whole write vocabulary.
   Round 6 added `View`, `Decision`, `DocRef`, `Layer`, `Workspace`, the `open` slot, and
   `render/archify-append.ts`; `.addone/views/addone.map.json` holds the world map's layout.
-- Work tickets: None.
+- Work tickets (GitHub, native `blocked_by` edges set 2026-08-29; initial frontier #2):
+  - #2 read and write the model through the cli (context, apply) — https://github.com/Decayo/ADDONE/issues/2
+  - #3 addone init installs into a fresh repo — blocked by #2 — https://github.com/Decayo/ADDONE/issues/3
+  - #4 scope guard blocks an out-of-scope write on both hosts — blocked by #2 — https://github.com/Decayo/ADDONE/issues/4
+  - #5 world map rendered through Archify with the second layer and the shell — blocked by #2 — https://github.com/Decayo/ADDONE/issues/5
+  - #6 ascii projection after every apply — blocked by #2 — https://github.com/Decayo/ADDONE/issues/6
+  - #7 watch re-renders and reloads on change — blocked by #5 — https://github.com/Decayo/ADDONE/issues/7
+  - #8 reconcile runs on ADDONE itself — blocked by #2, #6 — https://github.com/Decayo/ADDONE/issues/8
+  - #9 second view through the layout procedure — blocked by #5 — https://github.com/Decayo/ADDONE/issues/9
 - Review: None.
 - Delivery: None.
 - Prototype: `prototypes/home-window/` — display question "What does the ADDONE home

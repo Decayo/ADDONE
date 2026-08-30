@@ -5,4 +5,4 @@ decisions; this file holds only the pointer.
 
 | Feature | Status | Record |
 |---|---|---|
-| First slice | settled | [first-slice.md](./first-slice.md) |
+| First slice | planned | [first-slice.md](./first-slice.md) |
