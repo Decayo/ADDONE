@@ -1,16 +1,60 @@
-# ADDONE derived state.
-# Intent, contracts, rules, decisions, and scopes stay tracked (ADDONE.md section 54).
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# Nothing below this heading may ever reach a public remote. Each pattern is
+# narrow on purpose: a broad one hides a legitimate file without saying so.
+
+# Environment files. The example is tracked so a reader knows which keys exist.
+.env
+.env.*
+!.env.example
+
+# Registry and network credentials. `.npmrc` holds the npm publish token, and
+# this package is published, so it is the most likely thing to leak from here.
+.npmrc
+.netrc
+_netrc
+
+# Private keys and certificate bundles.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_rsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+
+# Cloud and CI credential files.
+credentials.json
+service-account*.json
+gha-creds-*.json
+.aws/
+.gcloud/
+
+# A .gitignore only stops an untracked file. It does not stop `git add -f`, and
+# it does nothing for a file that is already tracked or already in history.
+
+# ── ADDONE state ──────────────────────────────────────────────────────────────
+# Intent, contracts, rules, decisions and scopes stay tracked. Only derived
+# state is ignored.
 .addone/.cache/
 
 # Local-only architecture state, for anyone who opts out of tracked sidecar mode.
 .addone.local/
 
-# OS / editor
+# ── Agent hosts ───────────────────────────────────────────────────────────────
+# Claude Code worktree scratch. This becomes wrong the day `addone init` lands:
+# init writes `.claude/settings.json` into a target repo and that file is meant
+# to be tracked. Narrow this to the scratch paths when that ticket ships.
+.claude/
+
+# Every host's local override, which is where a per-machine token would sit.
+*.local.json
+
+# ── Build and editor noise ────────────────────────────────────────────────────
+node_modules/
+prototypes/**/out/
 .DS_Store
 *.swp
-
-# Prototype render output
-prototypes/**/out/
-
-# Claude Code scratch (agent worktrees)
-.claude/
