@@ -1,16 +1,17 @@
 # Change: First slice
 
-**Status:** implementing
+**Status:** discussing
 **Route:** large
 
 ## Outcome
 
-CONTEXT, SCOPE, RECONCILE, and WATCH exist, with ADDONE itself as the architecture they
-describe, and with a SCOPE hook that blocks an out-of-bounds write on both Claude Code and
-Codex. Success is measured on the same task with the same model and budget: fewer grep and
-read calls, fewer scope violations, fewer human reconstructions of what the agent did.
-The slice ships as a minimal installable tool: `addone init` in a fresh repo, then the
-loop runs there.
+`addone doctor` tells the owner of a repo what this machine has, what ADDONE needs, and
+what to run next. `addone init` writes the `.addone/` that doctor's findings imply.
+`addone ascii` prints the architecture as text. Success is the owner of this repo running
+all three and saying the output is right. Not tests.
+
+The wider claim, that architecture state lowers an agent's discovery cost, is not measured
+in this slice. Its benchmark decisions are in Later.
 
 Inherited as settled: the invariants in `CONTEXT.md`.
 
@@ -98,6 +99,114 @@ dependency is dev-only and never reaches an installed ADDONE. `npx` was rejected
 that needs the network is a check that skips itself when the network is down, silently.
 No build step is added. `--noEmit` reads; it does not produce.
 
+
+### The first slice is `doctor`, then `init`, then `ascii`
+
+Ordered by what the owner of this repo can run, not by what is architecturally lowest.
+`doctor` needs no state and works in any repo, so it runs on day one. `init` writes the
+`.addone/` that doctor's findings imply. `ascii` prints the architecture as text, which
+needs no browser, no server, no layout engine, and no link routing. Nothing from the web
+UI line is in this slice. The previous slice went depth-first into rendering and shipped
+nothing runnable; `src/render/ascii.ts` stayed at five lines and one `todo()` while
+Archify got a POC, a three-variant prototype, an append round, and a whole link route
+table.
+
+### A step is done when the user runs it and says the output is right
+
+Not when the tests pass. The deleted slice had 74 green tests over code the owner of the
+repo never ran once, and not one of them caught the six names in the documents that
+referred to nothing. Tests stay, but they are not the acceptance evidence.
+
+### Install is the moment the tool says what it can do on this machine
+
+The essence of install is clarifying the cli and the capabilities, not writing files. So
+the slot list is a report, not a questionnaire. `init` does not ask "archify or mermaid";
+it measures, then says which of them is present and picks accordingly. A question whose
+options are all unbuilt is theatre. The one honest question on day one is what this repo
+is for, because the root entity's intent needs a human.
+
+### Doctor measures; it never reads a config and reports it as a fact
+
+The failure mode named by every source on this: a doctor that checks whether `JAVA_HOME`
+is set and prints a green check, instead of running `$JAVA_HOME/bin/java -version`. Test
+behaviour, not configuration. Use `fs.accessSync(path, W_OK)` and not `existsSync`; bind
+the port rather than reading the port number; open the file at the line rather than
+formatting the URI.
+
+Measured while designing this, before a line was written: `command -v continue` returns
+`continue`, which reads as installed. `continue` is a shell builtin. The first detection
+attempt produced a false positive, so host detection runs `<binary> --version` and
+requires exit 0 with output.
+
+### Three questions about a host, never merged into one
+
+Whether the machine has it, whether this repo is configured for it, and whether we are
+running inside it right now are three different facts with three different answers.
+Installed but not configured, and configured but not installed, are different situations
+and get different advice. Claude Code sets `CLAUDECODE=1` and `CLAUDE_CODE_CHILD_SESSION=1`
+in the processes it spawns, verified on this machine 2026-08-31.
+
+### The report follows the `flutter doctor` convention
+
+`flutter doctor` is the form everyone else copies, including `react-native doctor` and
+`expo-doctor`. Take three things from it: group by subsystem rather than a flat list; use
+`[✓]` pass, `[!]` warning, `[✗]` failure; and put a runnable fix line under every non-green
+row. `brew doctor` adds the same fix-line habit in prose. `npm doctor` is the negative
+example: it prints values without interpreting them, which hands the judgement back to the
+reader.
+
+Exit 0 when everything passes or only warns, 1 when something is broken. A `--json` flag
+carries the raw findings so a bug report needs no copy-paste of formatted text.
+
+### A capability that is absent is a warning; a capability that is broken is an error
+
+Absent means the tool degrades and says so in the same line: "Archify not installed, ascii
+output only". Broken means the user expected it to work and it will fail, which is an
+error. The report ends with a list of what `addone` can do in this repo right now, one
+line per command, in the same three states.
+
+### The known-host table is data with provenance, and `unknown` is a value
+
+Two kinds of field. A machine field is re-measured on every run: is the binary there, does
+this repo have the host's project directory, is this process inside it. A product field is
+established once and is then true for everyone: what the host's hook key is called, whether
+a hook can deny, where its project config lives. Code cannot discover a product field, so
+its empty state is `?`, printed as such.
+
+Every product field stores how it was obtained and when: `measured` means someone ran it,
+`read` means someone read the official documentation without running it, `unknown` means
+nobody has looked. `read` is recorded separately from `measured` because an external model
+stated with confidence that Codex is no longer a terminal CLI on the same day `codex
+--version` printed `codex-cli 0.149.1` on this machine.
+
+### Doctor is a command plus a skill
+
+The command fills the machine fields. The skill fills the product fields: it reads the
+table, picks one `?`, goes to that host's repository and official documentation, runs the
+host if it is installed here, and writes the row back with its provenance and date. This
+is ADDONE's own thesis applied to itself: the table is state, the agent maintains it, the
+code only reads it.
+
+Verified today, so the table starts with two rows and eight question marks: Claude Code
+`2.1.251`, Codex `codex-cli 0.149.1`, opencode `1.17.9`, gemini `0.18.4`, grok `1.0.13`
+all run here; `pi`, `goose`, `crush`, `aider` and Continue's `cn` do not. Hook deny is
+measured only for Claude Code and Codex, by POC-1 on 2026-08-29.
+
+### The host table ships with ADDONE; the repo's config overrides it
+
+`hosts.json` lives beside ADDONE's source and travels with its version, because it is
+knowledge about the outside world and is the same for every user. A machine's exception,
+a host at an unusual path or one ADDONE has never heard of, goes in that repo's
+`.addone/config.json`. Shared knowledge and local exception never share a file.
+
+### No runtime dependencies
+
+`envinfo` (7.21.0) and `listr2` (11.0.1) are what the Node ecosystem reaches for, and both
+are real and current. Neither is taken. `envinfo` gathers node, npm and OS versions, which
+is roughly a third of what doctor needs and none of the interesting third; the editor,
+browser, git and host checks are all ours. `listr2` renders spinners for slow asynchronous
+tasks, and these checks finish in milliseconds. The conventions are worth copying; the
+packages are not worth the first dependency in a repo that has none.
 
 ## Later decisions
 
@@ -304,6 +413,16 @@ Each group names the decision it was weighed against.
 - **Ship a parser or tree-sitter.** The agent already parses.
 - **GitNexus.** A skill, not a library; RECONCILE would stop being deterministic.
 
+**Doctor's shape**
+- **A slot questionnaire at install time.** Ten questions whose options are unbuilt. The
+  answers would change nothing.
+- **`envinfo` plus `listr2`.** A third of the data and none of the hard part, for the
+  repo's first dependency.
+- **Detecting a host with `command -v`.** Measured false positive on `continue`, a shell
+  builtin.
+- **Detecting only the hosts installed on this machine.** Loses the other five entirely.
+  `?` reports the gap without inventing the answer.
+
 ## Non-goals
 
 HTML as an editor. A `<canvas>` graph engine. An own layout engine. Figma or IcePanel sync.
@@ -312,7 +431,15 @@ Archify; both are adapters. `PLAN.md`, `SPEC.md`, `HUD.md`, `CLI.md`, `RENDERER.
 
 ## Open decisions
 
-None. Depth 0 is closed; the second layer is settled.
+- **How an architecture address maps to a file path.** The rule lived only in the deleted
+  `skill/SKILL.md` and was never in this record. Needed before the first source file is
+  written.
+- **What the ascii output looks like.** A tree was drawn and accepted on 2026-08-31, but
+  it rendered the `.addone/` that has since been deleted, and it dropped the reason on a
+  forbidden edge and showed no intent. Re-open when there is state to render.
+- **What `init` writes.** Derived from what `doctor` finds, so it waits for doctor to run.
+- **Whether `addone` needs `apply` in this slice.** `init` writes state once. Nothing else
+  in the slice changes it.
 
 ## Domain references
 
