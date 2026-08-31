@@ -1,6 +1,6 @@
 # Change: First slice
 
-**Status:** discussing
+**Status:** planned
 **Route:** large
 
 ## Outcome
@@ -460,7 +460,8 @@ Archify; both are adapters. `PLAN.md`, `SPEC.md`, `HUD.md`, `CLI.md`, `RENDERER.
   never built, so nothing written against them could be trusted. What remains in
   `.addone/architecture.json` is intent only: entities, relations, forbidden edges,
   scopes, docs.
-- Work tickets: all nine GitHub issues deleted on 2026-08-31. Nothing is in flight.
+- Work tickets: the first nine were deleted on 2026-08-31. One is open:
+  - #10 `npx addone doctor` reports this machine — https://github.com/Decayo/ADDONE/issues/10
 - Review: None.
 - Delivery: None.
 - Prototype: `prototypes/home-window/` — display question "What does the ADDONE home
