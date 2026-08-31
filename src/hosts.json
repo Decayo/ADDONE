@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "_": "Knowledge about other tools, not about this repo, so it ships with the package. A machine's own exception belongs in that repo's .addone/config.json. Every field carries how it was obtained: `measured` means someone ran it, `read` means someone read the official documentation without running it, `unknown` means nobody has looked. A candidate binary name with how=unknown is still tried, because trying costs nothing and a hit is new knowledge.",
+  "hosts": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "binary": { "value": "claude", "how": "measured", "when": "2026-08-31" },
+      "project": { "value": ".claude/settings.json", "how": "measured", "when": "2026-08-29", "by": "POC-1" },
+      "env": { "value": "CLAUDECODE", "how": "measured", "when": "2026-08-31" },
+      "hook": { "value": "PreToolUse, denies by exit 2 or permissionDecision deny", "how": "measured", "when": "2026-08-29", "by": "POC-1" }
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "binary": { "value": "codex", "how": "measured", "when": "2026-08-31" },
+      "project": { "value": ".codex/hooks.json", "how": "measured", "when": "2026-08-29", "by": "POC-1" },
+      "env": { "how": "unknown" },
+      "hook": { "value": "PreToolUse, denies by exit 2 or permissionDecision deny; project hooks need a trusted path", "how": "measured", "when": "2026-08-29", "by": "POC-1" }
+    },
+    {
+      "id": "opencode",
+      "name": "opencode",
+      "binary": { "value": "opencode", "how": "measured", "when": "2026-08-31" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini CLI",
+      "binary": { "value": "gemini", "how": "measured", "when": "2026-08-31" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "grok",
+      "name": "Grok CLI",
+      "binary": { "value": "grok", "how": "measured", "when": "2026-08-31" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "pi",
+      "name": "Pi",
+      "binary": { "value": "pi", "how": "unknown" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "goose",
+      "name": "Goose",
+      "binary": { "value": "goose", "how": "unknown" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "crush",
+      "name": "Crush",
+      "binary": { "value": "crush", "how": "unknown" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "aider",
+      "name": "Aider",
+      "binary": { "value": "aider", "how": "unknown" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    },
+    {
+      "id": "continue",
+      "name": "Continue",
+      "binary": { "value": "cn", "how": "unknown" },
+      "project": { "how": "unknown" },
+      "env": { "how": "unknown" },
+      "hook": { "how": "unknown" }
+    }
+  ]
+}

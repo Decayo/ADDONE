@@ -1,6 +1,6 @@
 # Change: First slice
 
-**Status:** planned
+**Status:** reviewing
 **Route:** large
 
 ## Outcome
@@ -462,7 +462,7 @@ Archify; both are adapters. `PLAN.md`, `SPEC.md`, `HUD.md`, `CLI.md`, `RENDERER.
   scopes, docs.
 - Work tickets: the first nine were deleted on 2026-08-31. One is open:
   - #10 `npx addone doctor` reports this machine — https://github.com/Decayo/ADDONE/issues/10
-- Review: None.
+- Review: two rounds on #10, evidence on the issue. Round 1 found that absent and broken were collapsed into one boolean; round 2 found that a hanging probe printed its report and then never let the process exit, because killing a shell does not reach the child the shell started.
 - Delivery: None.
 - Prototype: `prototypes/home-window/` — display question "What does the ADDONE home
   window show, and how does a human navigate layers, last change, todo, and explore?"

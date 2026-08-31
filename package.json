@@ -5,6 +5,13 @@
   "license": "MIT",
   "author": "Decayo",
   "type": "module",
+  "bin": {
+    "addone": "./src/cli.ts"
+  },
+  "files": [
+    "src",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=26"
   },
