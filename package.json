@@ -1,10 +1,20 @@
 {
   "name": "addone",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
   "description": "Architecture as the working interface between a human and coding agents.",
+  "license": "MIT",
+  "author": "Decayo",
+  "type": "module",
   "engines": {
     "node": ">=26"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Decayo/ADDONE.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Decayo/ADDONE/issues"
+  },
+  "homepage": "https://github.com/Decayo/ADDONE#readme",
+  "private": true
 }

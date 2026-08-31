@@ -6,7 +6,7 @@
     "https://host/open?p={path}&l={line}",
     "https://github.com/Decayo/ADDONE/blob/main/{path}#L{line}"
   ],
-  "repoRoot": "/mnt/shares/arch-linux/workspace/ADDONE",
+  "repoRoot": "<the repo root, supplied at render time>",
 
   "nodes": {
     "human": { "phase": "none" },
