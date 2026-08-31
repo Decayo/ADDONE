@@ -16,26 +16,9 @@ Inherited as settled: the invariants in `CONTEXT.md`.
 
 ## Settled decisions
 
-### Two subjects, two jobs
+Each of these governs something in the first slice: `doctor`, `init`, `ascii`, or the
+cli itself.
 
-ADDONE is the greenfield subject and the dogfood target;
-the vision's success signal (the author still reaching for the loop after a few
-features) exists only here. `pipecat-ai/pipecat` is the read-only reconstruction subject
-for the benchmark. Its `.addone/` is produced once and graded, so only one tree evolves.
-### Host-neutral core; enforcement through each host's PreToolUse hook. No MCP
-
-Verified on Codex 0.149.1: PreToolUse fires for `apply_patch`, `Edit`, `Write`, and
-denies by exit code 2 or `permissionDecision: "deny"`, the same wire shape as Claude
-Code, so one hook script serves both. MCP has no pre-write interception point.
-**Executed, not just read: POC-1 on 2026-08-29.** One 25-line script, project-scoped
-hook config on each host (`.claude/settings.json`, `.codex/hooks.json`), headless run
-on each: `allowed/ok.txt` written, `forbidden/no.txt` blocked, both hosts reported the
-deny reason back to the model. Two adapter differences to carry into scope's design:
-Claude Code passes `tool_input.file_path`; Codex passes the whole patch in
-`tool_input.command`, so paths come from `*** Add File:` / `*** Update File:` lines.
-Codex project hooks need trust (a trusted project path, or
-`--dangerously-bypass-hook-trust`). Headless Codex must call the real binary; the
-`codex-multi-auth` wrapper hung for five minutes with a manual login in progress.
 ### `.addone/` is tracked; only `.cache/` is ignored
 
 Untracked state forfeits shared
@@ -57,6 +40,91 @@ Opening the full tree now would leave empty files that manufacture discovery tax
 Humans neither write nor read the file (invariant 3), which
 removes YAML's reasons; `intent` is one sentence, which removes the last one. JSON has no
 type coercion surprises.
+### State is written through `cli apply`
+
+Validation at write time (ids unique,
+parents exist, single-valued fields), and the LAST record is written in the same step.
+Direct JSON edits stay possible for repair but are not the documented path. How much
+of this the skill must say is decided when SKILL.md is written.
+### docs joins the model's keys
+
+`docs` joins the model's keys. Views and decisions are separate files
+under `.addone/views/` and `.addone/decisions/`, one SSOT each; they are not model keys.
+### The first slice is a minimal, installable ADDONE that can dogfood a new repo
+
+Success is `addone init` in a fresh repo leaving it ready for the loop in one command,
+then the loop running there: context, apply, render, watch, scope, reconcile. Polish is
+out; the author's next repos are waiting on this. Install shape: the cli on PATH by a
+symlink to `src/cli.ts`; skill and hook fragments written into the target repo by `init`
+(`.claude/settings.json`, `.codex/hooks.json`, `.claude/skills/addone`,
+`.agents/skills/addone`); fleet-managed global files are never touched. The second
+dogfood subject is the author's next new repo, before Pipecat. This amends "Two subjects,
+two jobs": two greenfield subjects come before the reconstruction subject.
+### Nothing invalid reaches the JSON
+
+An anchor naming a file that is not in the repo
+is refused at write time, beside the entity and relation shape rules; `validate` gains
+`anchors.file-missing`. A stale anchor whose file later disappears renders red as
+`missing`, a third state beside green `match` and yellow `drift`, and the HUD says so
+instead of emitting a dead link. The rule exists because a hallucinated path,
+`src/commands/context.ts`, survived from POC-3's sample data all the way to a failed jump
+in front of the user.
+### `addone doctor` reports the machine, not the config
+
+Every line is measured:
+editor present and which, the registered `vscode://` handler, the default browser through
+`xdg-settings`, the detected surface, whether a window already holds this repo, anchors
+that exist versus missing versus drifted, hook files in place. `init` runs it at the end,
+so an install that cannot work says so on the spot. A product that cannot be used cannot
+be dogfooded.
+### Every stage of the loop is a slot
+
+Core defines the interface; adapters fill it;
+`addone init` walks the slots top-down and records each choice in `.addone/config.json`;
+each slot carries its own progress (unchosen, chosen, installed, verified) and the HUD
+shows it. Slots, with the agent's proposed defaults: host (both), install (project),
+state mode (sidecar), write path (cli), render (archify + ascii), watch (addone
+watch), enforce (hook), evidence (agent procedure). A default can change per slot
+without reopening the slot list itself.
+
+### The type gate is a pinned devDependency, not a network call
+
+The deleted skill required `tsc --noEmit` before review. Nothing in the repo could run it:
+no `tsconfig.json`, no typescript dependency, no binary on the machine. Node runs
+TypeScript by stripping the types, so every type error went through unseen. The answer is
+a `tsconfig.json` and typescript pinned as a devDependency. This costs the repo its
+zero-dependency working tree, which is the price of the gate existing at all; the
+dependency is dev-only and never reaches an installed ADDONE. `npx` was rejected: a check
+that needs the network is a check that skips itself when the network is down, silently.
+No build step is added. `--noEmit` reads; it does not produce.
+
+
+## Later decisions
+
+Every decision below describes a stage of the loop that has no code, no ticket, and no
+plan this slice. They are kept because the reasoning and the measurements behind them are
+real. They are not premises. Nothing may be built on one without moving it back up first.
+
+### Two subjects, two jobs
+
+ADDONE is the greenfield subject and the dogfood target;
+the vision's success signal (the author still reaching for the loop after a few
+features) exists only here. `pipecat-ai/pipecat` is the read-only reconstruction subject
+for the benchmark. Its `.addone/` is produced once and graded, so only one tree evolves.
+### Host-neutral core; enforcement through each host's PreToolUse hook. No MCP
+
+Verified on Codex 0.149.1: PreToolUse fires for `apply_patch`, `Edit`, `Write`, and
+denies by exit code 2 or `permissionDecision: "deny"`, the same wire shape as Claude
+Code, so one hook script serves both. MCP has no pre-write interception point.
+**Executed, not just read: POC-1 on 2026-08-29.** One 25-line script, project-scoped
+hook config on each host (`.claude/settings.json`, `.codex/hooks.json`), headless run
+on each: `allowed/ok.txt` written, `forbidden/no.txt` blocked, both hosts reported the
+deny reason back to the model. Two adapter differences to carry into scope's design:
+Claude Code passes `tool_input.file_path`; Codex passes the whole patch in
+`tool_input.command`, so paths come from `*** Add File:` / `*** Update File:` lines.
+Codex project hooks need trust (a trusted project path, or
+`--dangerously-bypass-hook-trust`). Headless Codex must call the real binary; the
+`codex-multi-auth` wrapper hung for five minutes with a manual login in progress.
 ### Full A/B/C benchmark on the reconstruction subject
 
 A is the bare repo with its
@@ -86,12 +154,6 @@ from it and is never stored separately.
 Agent-first;
 HUD interaction is a later stage, verified only after the other stages work.
 Confirms INTERFACE.md section 8 ordering.
-### State is written through `cli apply`
-
-Validation at write time (ids unique,
-parents exist, single-valued fields), and the LAST record is written in the same step.
-Direct JSON edits stay possible for repair but are not the documented path. How much
-of this the skill must say is decided when SKILL.md is written.
 ### Layout belongs to the view, and the agent authors it. Auto-layout: a deferred
 option
 
@@ -170,20 +232,6 @@ input. Raised by POC-3: Archify's export sanitiser is a fixed denylist of its ow
 attributes, so a third-party layer would ride into PNG and SVG unnoticed. In parallel,
 ask upstream for a generic strip hook. An HTML overlay outside the SVG is the fallback if
 the appended page ever needs to stand alone.
-### docs joins the model's keys
-
-`docs` joins the model's keys. Views and decisions are separate files
-under `.addone/views/` and `.addone/decisions/`, one SSOT each; they are not model keys.
-### The first slice is a minimal, installable ADDONE that can dogfood a new repo
-
-Success is `addone init` in a fresh repo leaving it ready for the loop in one command,
-then the loop running there: context, apply, render, watch, scope, reconcile. Polish is
-out; the author's next repos are waiting on this. Install shape: the cli on PATH by a
-symlink to `src/cli.ts`; skill and hook fragments written into the target repo by `init`
-(`.claude/settings.json`, `.codex/hooks.json`, `.claude/skills/addone`,
-`.agents/skills/addone`); fleet-managed global files are never touched. The second
-dogfood subject is the author's next new repo, before Pipecat. This amends "Two subjects,
-two jobs": two greenfield subjects come before the reconstruction subject.
 ### The surface is an adapter, and t3.code gets none for now
 
 A surface is the
@@ -201,56 +249,18 @@ http(s) alone and only inside an agent turn.
 So t3.code is the surface that supplies cwd and picks an editor; the editor adapter does
 the jumping. Add a t3.code adapter when it exposes an open-file RPC. An upstream request
 for one optional `target` on `shell.openInEditor` would be cheap for them; not filed.
-### Nothing invalid reaches the JSON
-
-An anchor naming a file that is not in the repo
-is refused at write time, beside the entity and relation shape rules; `validate` gains
-`anchors.file-missing`. A stale anchor whose file later disappears renders red as
-`missing`, a third state beside green `match` and yellow `drift`, and the HUD says so
-instead of emitting a dead link. The rule exists because a hallucinated path,
-`src/commands/context.ts`, survived from POC-3's sample data all the way to a failed jump
-in front of the user.
-### `addone doctor` reports the machine, not the config
-
-Every line is measured:
-editor present and which, the registered `vscode://` handler, the default browser through
-`xdg-settings`, the detected surface, whether a window already holds this repo, anchors
-that exist versus missing versus drifted, hook files in place. `init` runs it at the end,
-so an install that cannot work says so on the spot. A product that cannot be used cannot
-be dogfooded.
 ### The architecture map comes first; other diagram types are renderer capabilities
 
 At every depth the main diagram is the map: a node's direct children and the relations
 between them, at most 12. `workflow`, `sequence`, `dataflow`, and `lifecycle` attach to a
 node when the chosen renderer supports them. Multi-layer navigation comes after the map
 works.
-### Every stage of the loop is a slot
-
-Core defines the interface; adapters fill it;
-`addone init` walks the slots top-down and records each choice in `.addone/config.json`;
-each slot carries its own progress (unchosen, chosen, installed, verified) and the HUD
-shows it. Slots, with the agent's proposed defaults: host (both), install (project),
-state mode (sidecar), write path (cli), render (archify + ascii), watch (addone
-watch), enforce (hook), evidence (agent procedure). A default can change per slot
-without reopening the slot list itself.
-
 ### No evidence provider is built
 
 RECONCILE is a skill procedure the agent runs with
 the grep, git, AST, and LSP it already has; ADDONE ships the intended half and the
 comparison format. Cost: an agent-run collection varies between runs, which the
 benchmark report has to state.
-
-### The type gate is a pinned devDependency, not a network call
-
-The deleted skill required `tsc --noEmit` before review. Nothing in the repo could run it:
-no `tsconfig.json`, no typescript dependency, no binary on the machine. Node runs
-TypeScript by stripping the types, so every type error went through unseen. The answer is
-a `tsconfig.json` and typescript pinned as a devDependency. This costs the repo its
-zero-dependency working tree, which is the price of the gate existing at all; the
-dependency is dev-only and never reaches an installed ADDONE. `npx` was rejected: a check
-that needs the network is a check that skips itself when the network is down, silently.
-No build step is added. `--noEmit` reads; it does not produce.
 
 ## Rejected alternatives
 
@@ -313,6 +323,10 @@ None. Depth 0 is closed; the second layer is settled.
 - Spec: deleted with the tickets on 2026-08-31. `docs/archive/INTERFACE.md` sections 4,
   5, and 8 remain the source for HUD contents, the live-reload minimum, and the deferred
   list.
+- Architecture state: `.addone/` was deleted on 2026-08-31. It was hand-written, never
+  produced by the tool, and six of its twelve entities described modules that do not
+  exist. `init` regenerates it, and every entity is added when its code is written. The
+  deleted content is in commit `8d52944`, should any of it be worth rebuilding.
 - Skeleton: deleted on 2026-08-31, commit `89bcec8`. `src/`, `test/`, `hooks/` and
   `skill/SKILL.md` are gone, and so are every anchor, phase, and assurance field in
   `.addone/architecture.json`. The documents around the skeleton named things that were

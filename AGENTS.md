@@ -4,12 +4,19 @@ ADDONE makes architecture the working interface between a human and coding agent
 Architecture intent lives as tracked JSON under `.addone/`; an agent compiles its context
 from that state instead of rediscovering the repo by grep each session.
 
-Where we are: depth 0 and depth 1 shaped, 29 decisions in `docs/decisions/first-slice.md`.
-The skeleton, the tests, the host hooks, the skill, and every ticket were deleted on
-2026-08-31 (commit `89bcec8`), because the documents that described them named commands,
-fields, and rules that were never built. `.addone/` now holds intent only: entities,
-relations, forbidden edges, scopes, docs, and one map view. There is no code, no anchor,
-and no open ticket. Read `.addone/` before anything else.
+Where we are: nothing is built. The skeleton, the tests, the host hooks, the skill, every
+ticket, and `.addone/` itself were deleted on 2026-08-31 (commits `89bcec8`, `8d52944`,
+and the one that follows them), because every one of them described something that was
+never built or was never run by the person who owns this repo.
+
+What is left is a change record. `docs/decisions/first-slice.md` holds eleven settled
+decisions that govern the first slice and eighteen later ones that describe stages with no
+code. A later decision is not a premise.
+
+The first slice is `addone doctor`, then `addone init`, then `addone ascii`. `doctor`
+measures this machine and reports what the tool can actually do here. `init` writes the
+`.addone/` that doctor's findings imply. `ascii` prints the architecture as text. No web
+UI, no Archify, no link routing, until those three run.
 
 ## Read first
 
